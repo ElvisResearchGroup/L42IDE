@@ -1,21 +1,13 @@
 package is.L42.repl;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.PrintStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 
 import is.L42.platformSpecific.javaTranslation.Resources;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
@@ -24,9 +16,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.SingleSelectionModel;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -59,6 +49,7 @@ public class ReplGui extends Application {
   Button openFileBtn;
   Button refreshB;
   Button loadProjectBtn;
+  Button openOverviewBtn;
   Stage stage;
   Tab selectedTab=null;
   @SuppressWarnings("unchecked")
@@ -113,6 +104,7 @@ public class ReplGui extends Application {
     runB.setDisable(true);
     runB.setOnAction(e->{
       for (Tab t : tabPane.getTabs()) {
+        if(t.getText().equals("OVERVIEW")){continue;}
         if (t.getText().endsWith("*")){
           System.out.println("Saving: " + t.getText());
           ReplTextArea editor = (ReplTextArea)t.getContent();
@@ -131,9 +123,11 @@ public class ReplGui extends Application {
         ((ReplTextArea)tab.getContent()).refresh();
       }
     });
+    openOverviewBtn=new Button("Overview");
+    openOverviewBtn.setOnAction(t->ReplMain.runLater(main::openOverview));
     Pane empty=new Pane();
     HBox.setHgrow(empty, Priority.ALWAYS);
-    ToolBar toolbar = new ToolBar(loadProjectBtn, openFileBtn, refreshB, empty, runB);
+    ToolBar toolbar = new ToolBar(loadProjectBtn, openFileBtn, refreshB,openOverviewBtn, empty, runB);
     borderPane.setTop(toolbar);
     //System.setOut(delegatePrintStream(out,System.out));
     System.setErr(delegatePrintStream(err,System.err));

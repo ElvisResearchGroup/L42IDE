@@ -96,9 +96,8 @@ var DocCommentHighlightRules = require("./doc_comment_highlight_rules").DocComme
 var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
 
 var L42HighlightRules = function() {
-    var keywords = (
-        "refine|method|interface|reuse|return|error|exception|in|if|while|with|on|catch|class|mut|lent|read|capsule|var|default|use|check|loop|else|void|implements"
-    );
+    var keywords =
+        "refine|method|interface|reuse|return|error|exception|in|if|while|for|whoops|catch|class|imm|fwd|mut|lent|read|capsule|var|loop|else|void";
 
     var keywordMapper = this.createKeywordMapper({
         "keyword": keywords,
@@ -125,7 +124,7 @@ var L42HighlightRules = function() {
                 push : [
                     {
                         token: 'string',
-                        regex:/^(\s*'.*)/ // middle
+                        regex:/^(\s*('|\||#|\*).*)/ // middle
                     },{
                         token: 'string',
                         regex:/^\s*["]/, // end
@@ -144,7 +143,7 @@ var L42HighlightRules = function() {
                 regex : /[\t]/ // Replace all tabs with a highlighted tab
             }, {
                 token : "string", // single line
-                regex : '["](?:(?:\\\\.)|(?:[^"\\\\]))*?["]'
+                regex : /".*?"/ //'["](?:(?:\\\\.)|(?:[^"\\\\]))*?["]'
             }, {
                 token : "string", // single line
                 regex : "['](?:(?:\\\\.)|(?:[^'\\\\]))*?[']"
@@ -166,7 +165,7 @@ var L42HighlightRules = function() {
                         }];
 
                 },                
-                regex : /[-0-9.]*[A-Z$][a-zA-Z0-9_$%]*/ // Classes / Upper Identifiers
+                regex : /[-0-9.]*[_]*[A-Z$][a-zA-Z0-9_$]*/ // Classes / Upper Identifiers
             }, {
                 token : function(val) {
                     return [{
@@ -177,7 +176,7 @@ var L42HighlightRules = function() {
                             value: val.slice(-1)
                         }];
                 },
-                regex : "[.]??[a-z_$#][a-zA-Z0-9_$]*\\(" // .methodName(
+                regex : "[.]??[a-z_$#][a-zA-Z0-9_$]*[\\(|\\[]" // .methodName(
             }, {
                 token : function(val) {
                     return [{
@@ -199,7 +198,7 @@ var L42HighlightRules = function() {
                             value: val.slice(-1)
                         }];
                 },
-                regex : "[a-z_$][a-zA-Z0-9_$]*\\:(?!=)" // parameter:
+                regex : "[a-z_$][a-zA-Z0-9_$]*\\=(?!=)" // parameter:
             }, {
                 token : function(val) {
                     return [{

@@ -21,10 +21,13 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import is.L42.common.Program;
+import is.L42.generated.Core;
 import is.L42.main.Main;
 import is.L42.platformSpecific.javaTranslation.Resources;
 import is.L42.tests.TestCachingCases;
 import is.L42.top.CachedTop;
+import is.L42.visitors.CloneVisitor;
+import is.L42.visitors.ToSVisitor;
 import javafx.application.Application;
 import javafx.application.Platform;
 
@@ -32,6 +35,7 @@ public class ReplMain {
   static ReplGui gui;//TODO: may be swap them so it is a singleton pattern?
   static AbsPath l42Root=new AbsPath(Path.of(".").toAbsolutePath());
   static ExecutorService executor = Executors.newFixedThreadPool(1);
+  Core.L topL;
   Program p=Program.emptyP;//TODO:
   CachedTop cache=null;
   public static void main(String []arg) {
@@ -102,6 +106,16 @@ public class ReplMain {
     String openFileName = l42Root.relativize(file).toString();
     makeReplTextArea(openFileName,content);
     }
+  void openOverview(){
+    //var top=//this.cache.lastTopL();//not always working, cache may not "store" the last step?
+    if(topL==null){makeReplTextArea("OVERVIEW","{}");return;}
+    var v=new is.L42.introspection.FullS(){
+      @Override public void visitInfo(Core.L.Info info){}
+      @Override public boolean headerNewLine(){return true;}
+      };
+    topL.accept(v);
+    makeReplTextArea("OVERVIEW",v.result().toString());
+    }
   private URL makeUrl(){
     URL url = getClass().getResource("textArea.xhtml");
     if(url.toString().startsWith("jar:")){
@@ -122,7 +136,7 @@ public class ReplMain {
     try{
       long start1=System.currentTimeMillis();
       TestCachingCases.last=start1;
-      Main.run(l42Root.resolve("This.L42"),cache);
+      this.topL=Main.run(l42Root.resolve("This.L42"),cache);
       cache=cache.toNextCache();
       CacheSaver.saveCache(cache);
       System.out.println(Resources.notifiedCompiledNC());
