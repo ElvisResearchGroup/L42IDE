@@ -65,8 +65,8 @@ var setAllAs=function(className,options){
     l42Box.setOptions(options);
     l42Box.setBehavioursEnabled(false);
     l42Box.setReadOnly(false);  // false to make it editable
-    // If our code as unrequired spaces at the front or back of the code. Remove them.
-    var text = ""+l42Box.getValue().trim();
+    window.setTimeout(function(){l42Box.getSession().foldAll();},100);
+    var text = ""+l42Box.getValue();
     l42Box.setValue(text,-1);
     }
   }
