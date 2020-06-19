@@ -1,7 +1,6 @@
 define("ace/mode/matching_brace_outdent",["require","exports","module","ace/range"], function(require, exports, module) {
 "use strict";
 
-var Range = require("../range").Range;
 
 var MatchingBraceOutdent = function() {};
 
@@ -120,14 +119,14 @@ var L42HighlightRules = function() {
                 next : "comment"
             }, { // Multiline String
                 token : 'string', // Start
-                regex : '["]$',
+                regex : '["""]$',
                 push : [
                     {
                         token: 'string',
                         regex:/^(\s*('|\||#|\*).*)/ // middle
                     },{
                         token: 'string',
-                        regex:/^\s*["]/, // end
+                        regex:/^\s*["""]/, // end
                         caseInsensitive:true,
                         next:"pop"
                     },
@@ -144,9 +143,6 @@ var L42HighlightRules = function() {
             }, {
                 token : "string", // single line
                 regex : /".*?"/ //'["](?:(?:\\\\.)|(?:[^"\\\\]))*?["]'
-            }, {
-                token : "string", // single line
-                regex : "['](?:(?:\\\\.)|(?:[^'\\\\]))*?[']"
             }, {
 		        token : function(val) {
                     var numberPattern = /^[-0-9][0-9.]*/;

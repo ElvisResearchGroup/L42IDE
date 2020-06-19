@@ -11,6 +11,8 @@ var doOnLoad=function (){
       maxLines:30000,
       mode:"ace/mode/l42",
       theme:"ace/theme/l42_eclipse",
+      tabSize: 100,
+      useSoftTabs: true, 
       });
   setOurMinMax();
   window.onresize=function(){setTimeout(setOurMinMax, 100);};
