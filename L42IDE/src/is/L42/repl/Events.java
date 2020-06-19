@@ -6,8 +6,7 @@ import java.util.List;
 public class Events{
 public boolean isDisposed=false;
 private final List<String>data=new ArrayList<>();
-public synchronized void add(String s){
-  data.add(s);}
+public synchronized void add(String s){data.add(s);}
 public synchronized String toString(){return data.toString();}
 public synchronized String get(){
   while(!isDisposed && data.isEmpty()){

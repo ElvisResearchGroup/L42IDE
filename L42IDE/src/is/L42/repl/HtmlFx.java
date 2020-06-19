@@ -1,16 +1,16 @@
 package is.L42.repl;
 
-import java.net.URL;
+import java.awt.Toolkit;
+import java.awt.datatransfer.ClipboardOwner;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Consumer;
-
 import is.L42.common.Program;
 import is.L42.generated.LL;
 import is.L42.generated.P;
 import javafx.application.Platform;
 import javafx.concurrent.Worker;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.Clipboard;
@@ -18,11 +18,9 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebEvent;
 import javafx.scene.web.WebView;
 import netscape.javascript.JSObject;
 
@@ -58,7 +56,7 @@ public class HtmlFx extends StackPane{
     browser.addEventHandler(KeyEvent.KEY_PRESSED, this::handleKeyPress);
 
     // retrieve copy event via javascript:alert
-    webEngine.setOnAlert((WebEvent<String> we) -> {
+    /*webEngine.setOnAlert((WebEvent<String> we) -> {
       if(we.getData()!=null && we.getData().startsWith("copy: ")){
          // COPY
          final Clipboard clipboard = Clipboard.getSystemClipboard();
@@ -66,7 +64,7 @@ public class HtmlFx extends StackPane{
          content.putString(we.getData().substring(6));
          clipboard.setContent(content);
       }
-    });
+    });*/
     //----
     this.getChildren().clear();
     this.getChildren().add(browser);
@@ -129,7 +127,20 @@ public class HtmlFx extends StackPane{
     if (t instanceof InterruptedException){Thread.currentThread().interrupt();}
     throw new Error(t);
     }
-
+  public void printOut(Object o){
+    System.out.println(o);
+    }
+  public void copy(String s) {
+    ClipboardContent content = new ClipboardContent();
+    content.putString(s);
+    Clipboard.getSystemClipboard().setContent(content);
+    }
+  public String paste() {
+    String content = (String) Clipboard.getSystemClipboard().getContent(DataFormat.PLAIN_TEXT);
+    if(content == null){return "";}
+    return content;
+    }
+  public void foldAll(){this.webEngine.executeScript("foldAll();");}
   public void createHtmlContent(CountDownLatch latch,Consumer<WebEngine> load) {
     assert Platform.isFxApplicationThread();
     initWeb(latch,load);
@@ -143,6 +154,8 @@ public class HtmlFx extends StackPane{
     assert o instanceof JSObject : o.toString();
     JSObject jsobj = (JSObject)o;
     jsobj.setMember("eventCollector",this.events);
+    JSObject window = (JSObject) webEngine.executeScript("window");
+    window.setMember("htmlFx",this);
     latch.countDown();
   }
 }

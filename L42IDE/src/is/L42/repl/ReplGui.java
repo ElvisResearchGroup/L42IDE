@@ -1,7 +1,11 @@
 package is.L42.repl;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.file.Files;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Function;
 
@@ -22,6 +26,7 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TabPane.TabClosingPolicy;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -50,6 +55,7 @@ public class ReplGui extends Application {
   Button refreshB;
   Button loadProjectBtn;
   Button openOverviewBtn;
+  Button newFileBtn;
   Stage stage;
   Tab selectedTab=null;
   @SuppressWarnings("unchecked")
@@ -62,14 +68,7 @@ public class ReplGui extends Application {
     catch (InterruptedException e) {throw HtmlFx.propagateException(e);}
     return (T)res[0];
     }
-  @Override
-  public void start(Stage primaryStage) throws Exception {
-    assert Platform.isFxApplicationThread();
-    ReplMain.gui=this;
-    stage=primaryStage;
-    BorderPane borderPane = new BorderPane();
-    tabPane.setTabClosingPolicy(TabClosingPolicy.ALL_TABS);
-    tabPane.getSelectionModel().selectedItemProperty().addListener((tab,oldTab,newTab)->selectedTab = newTab);
+  private void mkLoadProjectBtn(Stage primaryStage){
     loadProjectBtn = new Button("Load Project");
     loadProjectBtn.setOnAction(t->{
       assert Platform.isFxApplicationThread();
@@ -80,14 +79,17 @@ public class ReplGui extends Application {
       running=true;
       runB.setText("Loading");
       openFileBtn.setDisable(false);
+      newFileBtn.setDisable(false);
       refreshB.setDisable(false);
       ReplMain.runLater(()->{
         if(rootPathSet) {
           ReplGui.runAndWait(1,l->{closeAllTabs();l.countDown();return null;});
         }
         main.loadProject(outputFolder.toPath());
+        });
       });
-    });
+    }
+  private void mkOpenFileBtn(Stage primaryStage){
     openFileBtn=new Button("Open File in Project");
     openFileBtn.setDisable(true);
     openFileBtn.setOnAction(t->{
@@ -100,12 +102,66 @@ public class ReplGui extends Application {
       if(chosenFile==null) {return;} //no selection has been made
       ReplMain.runLater(()->main.openFile(chosenFile.toPath()));
       });
+    }
+  private void mkNewFileBtn(Stage primaryStage){
+    newFileBtn=new Button("New File in Project");
+    newFileBtn.setDisable(true);
+    newFileBtn.setOnAction(t->{
+      assert Platform.isFxApplicationThread();
+      TextInputDialog dialog = new TextInputDialog("Example1/Example2/Example3");
+      dialog.setHeaderText("Insert File Name. End with '/' for a new folder");
+      dialog.setTitle("New File in Project");
+      dialog.setContentText("name");
+      Optional<String> result = dialog.showAndWait();
+      if(result.isEmpty()){return;}
+      var r=result.get();
+      boolean isFolder=r.endsWith("/");
+      if(isFolder){r=r+"This";}
+      var ns=List.of(r.split("/"));
+      if(ns.isEmpty()) {return;}
+      System.out.println(ns);
+      var res=ReplMain.l42Root.inner;
+      int count=0;
+      while(count<ns.size()){
+        var current=ns.get(count).trim();
+        assert current.indexOf(".")==-1;
+        if(current.isEmpty()) {current="This";}
+        if(count+1==ns.size()){current+=".L42";}
+        res=res.resolve(current);
+        if(count+1==ns.size()){
+          try {
+            if(Files.exists(res)){continue;}
+            Files.createFile(res);
+            Files.write(res,"\n\n".getBytes());
+            }
+          catch (IOException e) {new Error(e);}
+          }
+        else {
+          var next=ns.get(count+1).trim();
+          try {
+            if(Files.exists(res)){continue;}
+            Files.createDirectory(res);
+            var tmp=res.resolve("This.L42");
+            Files.createFile(tmp);
+            Files.write(tmp,("\n"+next+"={...}\n").getBytes());
+            ReplMain.runLater(()->main.openFile(tmp));
+            }
+          catch (IOException e) {new Error(e);}          
+          }
+        count+=1;
+        }
+      var fRes=res;
+      ReplMain.runLater(()->main.openFile(fRes));
+      });
+    }
+  private void mkRunBtn(Stage primaryStage){
     runB=new Button("Run!");
     runB.setDisable(true);
     runB.setOnAction(e->{
       for (Tab t : tabPane.getTabs()) {
         if(t.getText().equals("OVERVIEW")){continue;}
-        if (t.getText().endsWith("*")){
+        if(t.getText().equals("OVERVIEW*")){continue;}
+        if(t.getText().endsWith("*")){
           System.out.println("Saving: " + t.getText());
           ReplTextArea editor = (ReplTextArea)t.getContent();
           editor.saveToFile();
@@ -116,18 +172,38 @@ public class ReplGui extends Application {
       disableRunB();
       ReplMain.runLater(()->main.runCode());
       });
+    }
+  private void mkRefreshBtn(Stage primaryStage){
     refreshB=new Button("Refresh");
     refreshB.setDisable(true);
     refreshB.setOnAction(t->{
       for(Tab tab: tabPane.getTabs()) {
         ((ReplTextArea)tab.getContent()).refresh();
-      }
-    });
+        }
+      });
+    }
+  private void mkOpenOverviewBtn(Stage primaryStage){
     openOverviewBtn=new Button("Overview");
     openOverviewBtn.setOnAction(t->ReplMain.runLater(main::openOverview));
+    }
+  @Override
+  public void start(Stage primaryStage) throws Exception {
+    assert Platform.isFxApplicationThread();
+    ReplMain.gui=this;
+    stage=primaryStage;
+    BorderPane borderPane = new BorderPane();
+    tabPane.setTabClosingPolicy(TabClosingPolicy.ALL_TABS);
+    tabPane.getSelectionModel().selectedItemProperty().addListener((tab,oldTab,newTab)->selectedTab = newTab);
+    mkLoadProjectBtn(primaryStage);
+    mkOpenFileBtn(primaryStage);
+    mkRunBtn(primaryStage);
+    mkRefreshBtn(primaryStage);
+    mkOpenOverviewBtn(primaryStage);
+    mkNewFileBtn(primaryStage);
     Pane empty=new Pane();
     HBox.setHgrow(empty, Priority.ALWAYS);
-    ToolBar toolbar = new ToolBar(loadProjectBtn, openFileBtn, refreshB,openOverviewBtn, empty, runB);
+    ToolBar toolbar = new ToolBar(
+      loadProjectBtn, openFileBtn, refreshB,openOverviewBtn,newFileBtn, empty, runB);
     borderPane.setTop(toolbar);
     //System.setOut(delegatePrintStream(out,System.out));
     System.setErr(delegatePrintStream(err,System.err));

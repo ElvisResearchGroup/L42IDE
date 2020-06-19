@@ -6,57 +6,31 @@ allDivs=[
 var doOnLoad=function (){
   hide(allDivs);
   // Get every l42 Div
-  setAllAs("l42",{
-      fontSize:"95%",
-      maxLines:3000,
-      mode:"ace/mode/l42",
-      theme:"ace/theme/l42_eclipse"
-      });
   setAllAs("l42Big",{
       fontSize:"170%",
-      maxLines:3000,
+      maxLines:30000,
       mode:"ace/mode/l42",
-      theme:"ace/theme/l42_eclipse"
+      theme:"ace/theme/l42_eclipse",
       });
-  setAllAs("java",{
-      fontSize:"95%",
-      maxLines:3000,
-      mode:"ace/mode/java",
-      theme:"ace/theme/github"
-      });
-  setAllAs("html",{
-      fontSize:"115%",
-      maxLines:3000,
-      mode:"ace/mode/html",
-      theme:"ace/theme/github"
-      });
-    var editor =ace.edit("textArea");
-
-    editor.getCopyText = function() {
-      var text = this.getSelectedText();
-      javascript:alert("copy: "+text);
-      this._signal("copy", text);
-      return text;
-      };
-    setOurMinMax();
-//    $( window ).resize(function() {
-//    	setTimeout(setOurMinMax, 100);
-//    });
-    window.onresize=function(){setTimeout(setOurMinMax, 100);};
+  setOurMinMax();
+  window.onresize=function(){setTimeout(setOurMinMax, 100);};
   }
 var setOurMinMax=function(){
-	var body=document.body;
-    var html=document.documentElement;
-
-    var height = Math.max(body.scrollHeight, body.offsetHeight,
-		   html.clientHeight, html.scrollHeight, html.offsetHeight );
-    var lineHeight = height/27-1;
-    setAllAs("l42Big",{
-      maxLines:lineHeight,
-      minLines:lineHeight
+  var body=document.body;
+  var html=document.documentElement;
+  var height = Math.max(body.scrollHeight, body.offsetHeight,
+    html.clientHeight, html.scrollHeight, html.offsetHeight );
+  var lineHeight = height/27-1;
+  setAllAs("l42Big",{
+    maxLines:lineHeight,
+    minLines:lineHeight
     });
-}
-
+  }
+var toFoldAll=false;
+var foldAll=function(){
+  htmlFx.printOut("JS folding mode");
+  toFoldAll=true;
+  }
 var setAllAs=function(className,options){
   var list = document.getElementsByClassName(className);
   for (var i = list.length - 1; i >= 0; i--) {
@@ -65,9 +39,20 @@ var setAllAs=function(className,options){
     l42Box.setOptions(options);
     l42Box.setBehavioursEnabled(false);
     l42Box.setReadOnly(false);  // false to make it editable
-    window.setTimeout(function(){l42Box.getSession().foldAll();},100);
     var text = ""+l42Box.getValue();
     l42Box.setValue(text,-1);
+    l42Box.getCopyText=function(){
+      var text = this.getSelectedText();
+      //htmlFx.printOut("copy called on "+text);
+      setTimeout(function(){htmlFx.copy(text);}, 100);
+      //it was overriding the clipboard later :-(
+      this._signal("copy", text);
+      return text;
+      };
+    if(toFoldAll){
+      l42Box.getSession().foldAll();
+      l42Box.getSession().unfold(1,false);
+      }
     }
   }
 
@@ -86,9 +71,7 @@ var showAll=function(elements){
     show(elements[index]);
   }
 }
-
 var selectDiv=function(id){
   hide(allDivs)
   show(id)
   }
-

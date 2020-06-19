@@ -83,6 +83,7 @@ public class ReplMain {
         )
       """;
   void loadProject(Path path) {
+    System.out.println(path.toAbsolutePath());
     Path thisFile=path.resolve("This.L42");
     List<Path> filesToOpen=Files.exists(thisFile)?
         openProject(path):makeNewProject(path,defaultMain,thisFile);
@@ -107,14 +108,15 @@ public class ReplMain {
     makeReplTextArea(openFileName,content);
     }
   void openOverview(){
-    //var top=//this.cache.lastTopL();//not always working, cache may not "store" the last step?
-    if(topL==null){makeReplTextArea("OVERVIEW","{}");return;}
+    var top=this.cache.lastTopL();//not always working, cache may not "store" the last step?
+    if(top.isEmpty()){makeReplTextArea("OVERVIEW","{}");return;}
     var v=new is.L42.introspection.FullS(){
       @Override public void visitInfo(Core.L.Info info){}
       @Override public boolean headerNewLine(){return true;}
       };
-    topL.accept(v);
-    makeReplTextArea("OVERVIEW",v.result().toString());
+    top.get().accept(v);
+    var area=makeReplTextArea("OVERVIEW",v.result().toString());
+    Platform.runLater(area.htmlFx::foldAll);
     }
   private URL makeUrl(){
     URL url = getClass().getResource("textArea.xhtml");
@@ -124,11 +126,12 @@ public class ReplMain {
       }
     return url;
     }
-  private void makeReplTextArea(String fileName,String tabContent) {
+  private ReplTextArea makeReplTextArea(String fileName,String tabContent) {
     URL url = makeUrl();
     assert url!=null:"";
     ReplTextArea editor=ReplGui.runAndWait(4,l->new ReplTextArea(l,fileName,url));
     Platform.runLater(()->gui.openTab(editor,tabContent));
+    return editor;
     }
 
   void runCode(){
