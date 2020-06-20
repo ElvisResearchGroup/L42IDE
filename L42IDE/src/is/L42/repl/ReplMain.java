@@ -140,13 +140,15 @@ public class ReplMain {
       long start1=System.currentTimeMillis();
       TestCachingCases.last=start1;
       this.topL=Main.run(l42Root.resolve("This.L42"),cache);
+      }
+    catch (IOException e) {throw new Error(e);}
+    finally{
       cache=cache.toNextCache();
       CacheSaver.saveCache(cache);
       System.out.println(Resources.notifiedCompiledNC());
-      Resources.clearResKeepReuse();     
+      Resources.clearResKeepReuse();
+      Platform.runLater(()->gui.updateTextFields());
       }
-    catch (IOException e) {throw new Error(e);}
-    finally{Platform.runLater(()->gui.updateTextFields());}
     }
   /* public static ReplState copyResetKVCthenRun(Function<Path, Loader> loaderFactory, String fileContent, String... doNotCopyFiles) throws IOException {
     return copyResetKVCthenRun(true, loaderFactory, fileContent, doNotCopyFiles);
