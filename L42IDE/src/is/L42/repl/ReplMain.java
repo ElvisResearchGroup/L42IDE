@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import is.L42.common.Constants;
 import is.L42.common.Program;
 import is.L42.generated.Core;
 import is.L42.main.Main;
@@ -39,6 +40,9 @@ public class ReplMain {
   Program p=Program.emptyP;//TODO:
   CachedTop cache=null;
   public static void main(String []arg) {
+    Constants.localhost=Paths.get("..","..","L42","L42","localhost");
+    //from    \git\L42IDE\L42IDE\localhost
+    //to      \git\L42\L42\localhost
     ReplGui.main=new ReplMain();
     Application.launch(ReplGui.class,arg);
     }
@@ -121,7 +125,7 @@ public class ReplMain {
   private URL makeUrl(){
     URL url = getClass().getResource("textArea.xhtml");
     if(url.toString().startsWith("jar:")){
-      try{return Paths.get("localhost","textArea.xhtml").toUri().toURL();}
+      try{return Constants.localhost.resolve("textArea.xhtml").toUri().toURL();}
       catch(MalformedURLException e){throw new Error(e);}
       }
     return url;
