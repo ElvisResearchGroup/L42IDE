@@ -140,6 +140,10 @@ public class ReplMain {
 
   void runCode(){
     assert gui.running:"not running-runCode";
+    Platform.runLater(()->{
+      gui.errors.setText("");
+      gui.output.setText("");
+      });
     try{
       long start1=System.currentTimeMillis();
       TestCachingCases.last=start1;

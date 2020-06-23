@@ -44,10 +44,10 @@ public class ReplGui extends Application {
   private static final int SCENE_HEIGHT = 600;
   TabPane tabPane=new TabPane();
   TextArea output=new TextArea();
-  {Resources.setOutHandler(this::setOut);}
-  private void setOut(String s){output.appendText(s);}
+  {Resources.setOutHandler(output::appendText);}
   TextArea errors=new TextArea();
-  StringBuffer err=new StringBuffer();
+  {Resources.setErrHandler(errors::appendText);}
+  //StringBuffer err=new StringBuffer();
   boolean rootPathSet=false;
   boolean running=false;
   Button runB;
@@ -206,7 +206,7 @@ public class ReplGui extends Application {
       loadProjectBtn, openFileBtn, refreshB,openOverviewBtn,newFileBtn, empty, runB);
     borderPane.setTop(toolbar);
     //System.setOut(delegatePrintStream(out,System.out));
-    System.setErr(delegatePrintStream(err,System.err));
+    //System.setErr(delegatePrintStream(err,System.err));
     TabPane outputPane = new TabPane();
     outputPane.setSide(Side.LEFT);
     outputPane.setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
@@ -293,17 +293,17 @@ public class ReplGui extends Application {
   }
 
   void updateTextFields(){//TODO: bad name; also, now out is handled separatly.
-    try{
+    /*try{
       assert err!=null:"a";
       assert errors!=null:"b";
       String newErr=err.toString();
       errors.setText(newErr);
       }
-    finally{
+    finally{*/
       this.enableRunB();
-      }
+     // }
     }
-
+  /*
   public static PrintStream delegatePrintStream(StringBuffer err,PrintStream prs){
     return new PrintStream(prs){
       public void print(String s) {
@@ -323,4 +323,5 @@ public class ReplGui extends Application {
         }
       };
     }
-  }
+  */
+}
