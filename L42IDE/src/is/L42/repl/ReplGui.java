@@ -55,6 +55,7 @@ public class ReplGui extends Application {
   Button refreshB;
   Button loadProjectBtn;
   Button openOverviewBtn;
+  Button clearCacheBtn;
   Button newFileBtn;
   Stage stage;
   Tab selectedTab=null;
@@ -186,6 +187,10 @@ public class ReplGui extends Application {
     openOverviewBtn=new Button("Overview");
     openOverviewBtn.setOnAction(t->ReplMain.runLater(main::openOverview));
     }
+  private void mkClearCacheBtn(Stage primaryStage){
+    clearCacheBtn=new Button("ClearCache");
+    clearCacheBtn.setOnAction(t->ReplMain.runLater(main::clearCache));
+    }
   @Override
   public void start(Stage primaryStage) throws Exception {
     assert Platform.isFxApplicationThread();
@@ -199,11 +204,12 @@ public class ReplGui extends Application {
     mkRunBtn(primaryStage);
     mkRefreshBtn(primaryStage);
     mkOpenOverviewBtn(primaryStage);
+    mkClearCacheBtn(primaryStage);
     mkNewFileBtn(primaryStage);
     Pane empty=new Pane();
     HBox.setHgrow(empty, Priority.ALWAYS);
     ToolBar toolbar = new ToolBar(
-      loadProjectBtn, openFileBtn, refreshB,openOverviewBtn,newFileBtn, empty, runB);
+      loadProjectBtn, openFileBtn, refreshB,openOverviewBtn,clearCacheBtn,newFileBtn, empty, runB);
     borderPane.setTop(toolbar);
     //System.setOut(delegatePrintStream(out,System.out));
     //System.setErr(delegatePrintStream(err,System.err));
@@ -251,6 +257,7 @@ public class ReplGui extends Application {
     }
   private void tabOnClose(ReplTextArea editor,Event t) {
     if(!editor.tab.getText().endsWith("*")) {return;}
+    if(!editor.tab.getText().equals("Overview")) {return;}
     Alert alert = new Alert(AlertType.CONFIRMATION);
     alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
     alert.getButtonTypes().setAll(ButtonType.NO,ButtonType.CANCEL,ButtonType.YES);

@@ -27,8 +27,6 @@ import is.L42.main.Main;
 import is.L42.platformSpecific.javaTranslation.Resources;
 import is.L42.tests.TestCachingCases;
 import is.L42.top.CachedTop;
-import is.L42.visitors.CloneVisitor;
-import is.L42.visitors.ToSVisitor;
 import javafx.application.Application;
 import javafx.application.Platform;
 
@@ -36,8 +34,6 @@ public class ReplMain {
   static ReplGui gui;//TODO: may be swap them so it is a singleton pattern?
   static AbsPath l42Root=new AbsPath(Path.of(".").toAbsolutePath());
   static ExecutorService executor = Executors.newFixedThreadPool(1);
-  Core.L topL;
-  Program p=Program.emptyP;//TODO:
   CachedTop cache=null;
   public static void main(String []arg) {
     Constants.localhost=Paths.get("..","..","L42","L42","localhost");
@@ -97,6 +93,11 @@ public class ReplMain {
     cache=CachedTop.loadCache(path);
     Platform.runLater(()->gui.enableRunB());
     }
+  void clearCache(){
+    try {Files.delete(l42Root.resolve("cache.L42Bytes"));}
+    catch (IOException e) {throw new Error(e);}
+    this.cache=CachedTop.loadCache(l42Root.inner);
+    }
   void openFile(Path file) {
     if(Files.exists(file) && l42Root.isChild(file)){openFileInNewTab(file);}
     else{Platform.runLater(()->gui.makeAlert("File not in Project","The selected file is not in the current project"));}
@@ -147,7 +148,7 @@ public class ReplMain {
     try{
       long start1=System.currentTimeMillis();
       TestCachingCases.last=start1;
-      this.topL=Main.run(l42Root.resolve("This.L42"),cache);
+      Main.run(l42Root.resolve("This.L42"),cache);
       }
     catch (IOException e) {throw new Error(e);}
     finally{

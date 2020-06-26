@@ -113,7 +113,7 @@ public class HtmlFx extends StackPane{
     //if(ReplGui.main.repl==null) {return;}
     //editor.setDoc("Row: "+row+" Col: "+col+"\n");
     FromDotToPath r=new FromDotToPath(editor.getText(),row,col);
-    Program p=ReplGui.main.p;
+    Program p=Program.emptyP;//TODO: not working now
     try{p=p.navigate(r.cs);}
     catch(Throwable t){throw new IllegalArgumentException(t);}
     //try {p=p.pop();}catch(Throwable  t) {}
