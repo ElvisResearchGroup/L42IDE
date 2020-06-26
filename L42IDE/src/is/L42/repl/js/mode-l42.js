@@ -5,35 +5,22 @@ define("ace/mode/matching_brace_outdent",["require","exports","module","ace/rang
 var MatchingBraceOutdent = function() {};
 
 (function() {
-
-    this.checkOutdent = function(line, input) {
-        if (! /^\s+$/.test(line))
-            return false;
-
-        return /^\s*\}/.test(input);
+  this.checkOutdent = function(line, input) {
+    if (! /^\s+$/.test(line)){return false;}
+    return /^\s*\}/.test(input);
     };
-
-    this.autoOutdent = function(doc, row) {
-        var line = doc.getLine(row);
-        var match = line.match(/^(\s*\})/);
-
-        if (!match) return 0;
-
-        var column = match[1].length;
-        var openBracePos = doc.findMatchingBracket({row: row, column: column});
-
-        if (!openBracePos || openBracePos.row == row) return 0;
-
-        var indent = this.$getIndent(doc.getLine(openBracePos.row));
-        doc.replace(new Range(row, 0, row, column-1), indent);
+  this.autoOutdent = function(doc, row) {
+    var line = doc.getLine(row);
+    var match = line.match(/^(\s*\})/);
+    if (!match){return 0;}
+    var column = match[1].length;
+    var openBracePos = doc.findMatchingBracket({row: row, column: column});
+    if (!openBracePos || openBracePos.row == row) return 0;
+    var indent = this.$getIndent(doc.getLine(openBracePos.row));
+    doc.replace(new Range(row, 0, row, column-1), indent);
     };
-
-    this.$getIndent = function(line) {
-        return line.match(/^\s*/)[0];
-    };
-
-}).call(MatchingBraceOutdent.prototype);
-
+    this.$getIndent = function(line) {return line.match(/^\s*/)[0];};
+  }).call(MatchingBraceOutdent.prototype);
 exports.MatchingBraceOutdent = MatchingBraceOutdent;
 });
 
@@ -47,7 +34,7 @@ var DocCommentHighlightRules = function() {
     this.$rules = {
         "start" : [ {
             token : "comment.doc.tag",
-            regex : "@[\\w\\d_]+" // TODO: fix email addresses
+            regex : "@[\\w\\d_]+"
         }, 
         DocCommentHighlightRules.getTagRule(),
         {
@@ -194,7 +181,7 @@ var L42HighlightRules = function() {
                             value: val.slice(-1)
                         }];
                 },
-                regex : "[a-z_$][a-zA-Z0-9_$]*\\=(?!=)" // parameter:
+                regex : "[a-z_$][a-zA-Z0-9_$]*\\=(?!=|\\>)" // parameter:
             }, {
                 token : function(val) {
                     return [{

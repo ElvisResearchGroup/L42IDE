@@ -73,10 +73,8 @@ public class HtmlFx extends StackPane{
     }
 
   private void handleKeyPress(KeyEvent keyEvent) {
-
     if(outerPanel==null || !(outerPanel instanceof ReplTextArea)) {return;}
     ReplTextArea editor=((ReplTextArea)outerPanel);
-
     //if (keyEvent.isControlDown() && keyEvent.getCode() == KeyCode.V){
     //  // PASTE
     //  Clipboard clipboard = Clipboard.getSystemClipboard();
@@ -95,18 +93,20 @@ public class HtmlFx extends StackPane{
       int col=(int)Double.parseDouble(jsobj.getMember("column").toString());
       try { displayDoc(editor,row,col); }
       catch(IllegalArgumentException e) {}
-    }
-
+      }
     //---CTRL+S save
     if (keyEvent.isControlDown() && keyEvent.getCode() == KeyCode.S){
       editor.saveToFile();
       editor.removeStar();
       return;
-    }
-
+      }
     //if (keyEvent.getCharacter().equals("\n"))
     //  editor.
-    editor.addStar(); //file has been modified (NOT SAVED)
+    //if(keyEvent.getCharacter().)
+    var c=keyEvent.getCode();
+    if(c.isDigitKey() || c.isLetterKey()|| c.isWhitespaceKey()){
+      editor.addStar(); //file has been modified (NOT SAVED)
+      }
   }
 
   private void displayDoc(ReplTextArea editor, int row, int col) {

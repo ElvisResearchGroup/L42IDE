@@ -25,7 +25,8 @@ var setOurMinMax=function(){
   var lineHeight = height/27-1;
   setAllAs("l42Big",{
     maxLines:lineHeight,
-    minLines:lineHeight
+    minLines:lineHeight,
+    autoScrollEditorIntoView: true
     });
   }
 var toFoldAll=false;
@@ -39,8 +40,10 @@ var setAllAs=function(className,options){
     // Turn it into an ace window and apply features
     var l42Box = ace.edit(list[i]);
     l42Box.setOptions(options);
-    l42Box.setBehavioursEnabled(false);
+    //l42Box.setBehavioursEnabled(false);
+    //l42Box.commands.removeCommand('find');
     l42Box.setReadOnly(false);  // false to make it editable
+    l42Box.setScrollSpeed(0.025);
     var text = ""+l42Box.getValue();
     l42Box.setValue(text,-1);
     l42Box.getCopyText=function(){
