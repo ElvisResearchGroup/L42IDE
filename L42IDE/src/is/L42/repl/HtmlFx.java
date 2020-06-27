@@ -74,6 +74,7 @@ public class HtmlFx extends StackPane{
 
   private void handleKeyPress(KeyEvent keyEvent) {
     if(outerPanel==null || !(outerPanel instanceof ReplTextArea)) {return;}
+    var c=keyEvent.getCode();
     ReplTextArea editor=((ReplTextArea)outerPanel);
     //if (keyEvent.isControlDown() && keyEvent.getCode() == KeyCode.V){
     //  // PASTE
@@ -85,7 +86,7 @@ public class HtmlFx extends StackPane{
     //}
 
     //DOCUMENTATION
-    if(keyEvent.getCode() == KeyCode.PERIOD) {
+    if(c == KeyCode.PERIOD) {
       Object o=webEngine.executeScript("ace.edit(\"textArea\").getCursorPosition()");
       assert o instanceof JSObject : o.toString();
       JSObject jsobj=(JSObject)o;
@@ -95,18 +96,14 @@ public class HtmlFx extends StackPane{
       catch(IllegalArgumentException e) {}
       }
     //---CTRL+S save
-    if (keyEvent.isControlDown() && keyEvent.getCode() == KeyCode.S){
+    if (keyEvent.isControlDown() && c == KeyCode.S){
       editor.saveToFile();
       editor.removeStar();
       return;
       }
-    //if (keyEvent.getCharacter().equals("\n"))
-    //  editor.
-    //if(keyEvent.getCharacter().)
-    var c=keyEvent.getCode();
-    if(c.isDigitKey() || c.isLetterKey()|| c.isWhitespaceKey()){
+    if(!c.isArrowKey() && !c.isMediaKey() && !c.isModifierKey()){
       editor.addStar(); //file has been modified (NOT SAVED)
-      }
+      }//selecting only the digits would, for example, fail to recognize deletion
   }
 
   private void displayDoc(ReplTextArea editor, int row, int col) {

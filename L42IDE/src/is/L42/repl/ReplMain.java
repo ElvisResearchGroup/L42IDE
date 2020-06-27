@@ -95,6 +95,7 @@ public class ReplMain {
     }
   void clearCache(){
     try {Files.delete(l42Root.resolve("cache.L42Bytes"));}
+    catch(java.nio.file.NoSuchFileException e){/*ignored*/}
     catch (IOException e) {throw new Error(e);}
     this.cache=CachedTop.loadCache(l42Root.inner);
     }
@@ -157,88 +158,6 @@ public class ReplMain {
       System.out.println(Resources.notifiedCompiledNC());
       Resources.clearResKeepReuse();
       Platform.runLater(()->gui.updateTextFields());
-      }
-    }
-  /* public static ReplState copyResetKVCthenRun(Function<Path, Loader> loaderFactory, String fileContent, String... doNotCopyFiles) throws IOException {
-    return copyResetKVCthenRun(true, loaderFactory, fileContent, doNotCopyFiles);
-  }
-*/
-  /*
-  public static ReplState copyResetKVCthenRun(boolean runAll, Function<Path, Loader> loaderFactory, String fileContent, String... doNotCopyFiles) throws IOException {
-    ReplState repl=null;
-
-    //check first 2 line of This.l42
-    System.out.println("READ FIRST2LINE...");
-    CodeInfo res=new CodeInfo(fileContent);
-
-    //check if library already cached in L42IDE folder
-    final AbsPath currentRoot=L42.root;
-
-    L42.setRootPath(Paths.get("L42IDE").toAbsolutePath()); //TODO: check later where is created?
-    final Path dirPath=L42.root.resolve(res.cacheLibName);
-
-    boolean cachedBefore= validSystemCache(dirPath);
-    if (!cachedBefore){ //if not already cached before
-      System.out.println("CREATING CACHE IN L42IDE FOR FIRST2LINE...");
-      if(!Files.exists(dirPath)) {Files.createDirectories(dirPath);}
-      L42.setRootPath(dirPath);
-      L42.cacheK.setFileName("This.L42","{"+res.first2Line+"}");
-      repl=ReplState.start("{"+res.first2Line+"}", loaderFactory.apply(dirPath.resolve("This.C42"))); //create the cache
-    }
-
-    //Copy the files into the current project
-    if(cachedBefore) {
-      System.out.println("COPYING CACHE FROM L42IDE TO CURRENT ROOT (WITHOUT This.C42)...");
-      ReplMain.copyEntireDirectory(dirPath,currentRoot,doNotCopyFiles);
-    } else {
-      System.out.println("COPYING CACHE FROM L42IDE TO CURRENT ROOT (WITH This.C42)...");
-      ReplMain.copyEntireDirectory(dirPath,currentRoot);
-    }
-
-    L42.root=currentRoot; //go back to project folder
-    //if(repl==null) {
-      L42.cacheK.setFileName("This.L42","{"+res.first2Line+"}");
-      System.out.println("RE-CREATING REPL FROM CACHE (FIRST2LINE ONLY)...");
-      repl=ReplState.start("{"+res.first2Line+"}", loaderFactory.apply(currentRoot.resolve("This.C42")));
-    //} else {
-    //  repl.reduction.loader.updateCachePath(pathC); //TODO: see why does not cache C properly (saved not in right place?)
-    //}
-
-    if(runAll) {
-      L42.cacheK.setFileName("This.L42",res.restOfCode);
-      System.out.println("ReplState.add(RESTOFCODE) RUNNING...");
-      ReplState newR=repl.add(res.restOfCode);
-      if(newR!=null){repl=newR;}
-    }
-
-    return repl;
-  }
-*/
-  protected static class CodeInfo{
-    String first2Line;
-    String cacheLibUrl;
-    String cacheLibName;
-    String restOfCode;
-    CodeInfo(String string){
-      try(Scanner sc = new Scanner(string)) {
-        Pattern delimit= Pattern.compile("(\\n| |,)*"); //newline, spaces and comma
-        sc.skip(delimit);
-        if(!sc.next().equals("reuse")) {throw new IllegalArgumentException();}
-        sc.skip(delimit);
-        this.cacheLibUrl=sc.next();
-        this.cacheLibName=URLEncoder.encode(this.cacheLibUrl, "UTF-8");
-        sc.skip(delimit);
-        String[] secondLine=sc.nextLine().split(":");
-        if(secondLine.length!=2) {throw new IllegalArgumentException();}
-        String className=secondLine[0];
-        String lastPart=secondLine[1];
-        //TODO: if(!PathAux.isValidClassName(className)) {throw new IllegalArgumentException();}
-        if(!lastPart.equals("Load.cacheTowel()")) {throw new IllegalArgumentException();}
-        this.first2Line="reuse "+cacheLibUrl+"\n"+className+":"+"Load.cacheTowel()";
-        sc.useDelimiter("\\Z"); //rest of the content
-        this.restOfCode=sc.next();
-        }
-      catch (UnsupportedEncodingException e){throw new IllegalArgumentException(e);}
       }
     }
   private static void copyEntireDirectory(Path src, AbsPath dest, String... doNotCopyFiles) {
