@@ -1,5 +1,7 @@
 package is.L42.repl;
 
+import static is.L42.tools.General.L;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -119,6 +121,11 @@ public class ReplMain {
     var v=new is.L42.introspection.FullS(){
       @Override public void visitInfo(Core.L.Info info){}
       @Override public boolean headerNewLine(){return true;}
+      @Override public void visitL(Core.L l){
+        var mwts=L(l.mwts().stream().sorted((m1,m2)->m1.key().toString().compareTo(m2.key().toString())));
+        var ncs=L(l.ncs().stream().sorted((m1,m2)->m1.key().inner().compareTo(m2.key().inner())));
+        super.visitL(l.withMwts(mwts).withNcs(ncs));
+        }
       };
     top.get().accept(v);
     var area=makeReplTextArea("OVERVIEW",v.result().toString());
