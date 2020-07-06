@@ -9,6 +9,9 @@ import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Function;
 
+import is.L42.common.EndError;
+import is.L42.common.Parse;
+import is.L42.generated.P;
 import is.L42.platformSpecific.javaTranslation.Resources;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -115,44 +118,7 @@ public class ReplGui extends Application {
       dialog.setContentText("name");
       Optional<String> result = dialog.showAndWait();
       if(result.isEmpty()){return;}
-      var r=result.get();
-      boolean isFolder=r.endsWith("/");
-      if(isFolder){r=r+"This";}
-      var ns=List.of(r.split("/"));
-      if(ns.isEmpty()) {return;}
-      System.out.println(ns);
-      var res=ReplMain.l42Root.inner;
-      int count=0;
-      while(count<ns.size()){
-        var current=ns.get(count).trim();
-        assert current.indexOf(".")==-1;
-        if(current.isEmpty()) {current="This";}
-        if(count+1==ns.size()){current+=".L42";}
-        res=res.resolve(current);
-        if(count+1==ns.size()){
-          try {
-            if(Files.exists(res)){continue;}
-            Files.createFile(res);
-            Files.write(res,"\n\n".getBytes());
-            }
-          catch (IOException e) {new Error(e);}
-          }
-        else {
-          var next=ns.get(count+1).trim();
-          try {
-            if(Files.exists(res)){continue;}
-            Files.createDirectory(res);
-            var tmp=res.resolve("This.L42");
-            Files.createFile(tmp);
-            Files.write(tmp,("\n"+next+"={...}\n").getBytes());
-            ReplMain.runLater(()->main.openFile(tmp));
-            }
-          catch (IOException e) {new Error(e);}          
-          }
-        count+=1;
-        }
-      var fRes=res;
-      ReplMain.runLater(()->main.openFile(fRes));
+      ReplMain.runLater(()->main.makeNewFile(result.get()));
       });
     }
   private void mkRunBtn(Stage primaryStage){
@@ -298,7 +264,6 @@ public class ReplGui extends Application {
     alert.setContentText(content);
     alert.showAndWait();
   }
-
   void updateTextFields(){//TODO: bad name; also, now out is handled separatly.
     /*try{
       assert err!=null:"a";

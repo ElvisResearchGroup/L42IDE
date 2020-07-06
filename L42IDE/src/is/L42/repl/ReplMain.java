@@ -23,15 +23,48 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import is.L42.common.Constants;
+import is.L42.common.EndError;
+import is.L42.common.Parse;
 import is.L42.common.Program;
 import is.L42.generated.Core;
+import is.L42.generated.P;
 import is.L42.main.Main;
 import is.L42.platformSpecific.javaTranslation.Resources;
 import is.L42.tests.TestCachingCases;
 import is.L42.top.CachedTop;
 import javafx.application.Application;
 import javafx.application.Platform;
-
+class AbsPath{ //absolutePath
+  final Path inner;
+  public AbsPath(Path inner) {
+    assert inner.isAbsolute();
+    this.inner=inner;
+    }
+  public Path resolve(String other) {
+    Path res=this.inner.resolve(other);
+    assert res.isAbsolute();
+    return res;
+    }
+  public Path resolve(Path other) {
+    assert !other.isAbsolute();
+    Path res=this.inner.resolve(other);
+    assert res.isAbsolute();
+    return res;
+    }
+  public String toString() {
+    return this.inner.toAbsolutePath().toUri().toString();
+    }
+  public Path relativize(Path other) {
+    Path res=inner.relativize(other);
+    assert !res.isAbsolute();
+    return res;
+    }
+  public boolean isChild(Path other) {
+    assert other.isAbsolute();
+    return other.startsWith(inner);
+    }
+  public File toFile() {return this.inner.toFile();}
+  }
 public class ReplMain {
   static ReplGui gui;//TODO: may be swap them so it is a singleton pattern?
   static AbsPath l42Root=new AbsPath(Path.of(".").toAbsolutePath());
@@ -78,12 +111,6 @@ public class ReplMain {
       }
     catch(IOException e){throw new Error(e);}
     }
-  public static final String defaultMain="""
-      reuse [AdamTowel]
-      Main=(
-        Debug(S"Hello world")
-        )
-      """;
   void loadProject(Path path) {
     System.out.println(path.toAbsolutePath());
     Path thisFile=path.resolve("This.L42");
@@ -103,13 +130,14 @@ public class ReplMain {
     }
   void openFile(Path file) {
     if(Files.exists(file) && l42Root.isChild(file)){openFileInNewTab(file);}
-    else{Platform.runLater(()->gui.makeAlert("File not in Project","The selected file is not in the current project"));}
+    else{displayError("File not in Project","The selected file is not in the current project");}
     }
+  void displayError(String title,String msg){Platform.runLater(()->gui.makeAlert(title,msg));}
   void openFileInNewTab(Path file) {
     assert file!=null && Files.exists(file);
     String content; try {content = new String(Files.readAllBytes(file));}
     catch (IOException e) {
-      Platform.runLater(()->gui.makeAlert("Invalid Project content","Lost contact with project folder"));
+      displayError("Invalid Project content","Lost contact with project folder");
       return;
       }
     String openFileName = l42Root.relativize(file).toString();
@@ -179,35 +207,64 @@ public class ReplMain {
       });
     } catch (IOException e1) {throw new Error(e1);}
   }
-}
-class AbsPath{ //absolutePath
-  final Path inner;
-  public AbsPath(Path inner) {
-    assert inner.isAbsolute();
-    this.inner=inner;
+  boolean checkValidC(String current){
+    var csP = Parse.csP(Constants.dummy, current);
+    if(csP.hasErr() || csP.res._p() != null){return false;}
+    var cs=csP.res.cs();
+    if(cs.size()!=1){return false;}
+    if(cs.get(0).hasUniqueNum()){return false;}
+    assert current.indexOf(".")==-1;
+    return true;
     }
-  public Path resolve(String other) {
-    Path res=this.inner.resolve(other);
-    assert res.isAbsolute();
-    return res;
+  Path processIntermediate(Path res,String current,String next){
+    if(!checkValidC(current)) {displayError("Invalid File name","Invalid File name: "+current);}
+    res=res.resolve(current);
+    try {
+      if(Files.exists(res)){return res;}
+      Files.createDirectory(res);
+      var tmp=res.resolve("This.L42");
+      Files.createFile(tmp);
+      if(!next.equals("This")){Files.write(tmp,("\n"+next+"={...}\n").getBytes());}
+      else{Files.write(res,"\n\n".getBytes());}
+      openFile(tmp);
+      return res;
+      }
+    catch (IOException e) {throw new Error(e);}          
     }
-  public Path resolve(Path other) {
-    assert !other.isAbsolute();
-    Path res=this.inner.resolve(other);
-    assert res.isAbsolute();
-    return res;
+  Path processLast(Path res,String current){
+    if(!current.equals("This") && !checkValidC(current)) {displayError("Invalid File name","Invalid File name: "+current);}
+    current+=".L42";
+    res=res.resolve(current);
+    try {
+      if(Files.exists(res)){return res;}
+      Files.createFile(res);
+      Files.write(res,"\n\n".getBytes());
+      return res;
+      }
+    catch (IOException e) {throw new Error(e);}
     }
-  public String toString() {
-    return this.inner.toAbsolutePath().toUri().toString();
+  void makeNewFile(String r) {
+    boolean isFolder=r.endsWith("/");
+    if(isFolder){r=r+"This";}
+    var ns=List.of(r.split("/"));
+    if(ns.isEmpty()) {return;}
+    System.out.println(ns);
+    var res=ReplMain.l42Root.inner;
+    int count=0;
+    while(count<ns.size()){
+      boolean isLast=count+1==ns.size();
+      var current=ns.get(count).trim();
+      if(!isLast) {res=processIntermediate(res,current, ns.get(count+1).trim());}
+      else {res=processLast(res,current);}
+      count+=1;
+      }
+    var fRes=res;
+    openFile(fRes);
     }
-  public Path relativize(Path other) {
-    Path res=inner.relativize(other);
-    assert !res.isAbsolute();
-    return res;
-    }
-  public boolean isChild(Path other) {
-    assert other.isAbsolute();
-    return other.startsWith(inner);
-    }
-  public File toFile() {return this.inner.toFile();}
+  public static final String defaultMain="""
+      reuse [AdamTowel]
+      Main=(
+        Debug(S"Hello world")
+        )
+      """;//in the bottom, so it does not mess up line numbers
   }
