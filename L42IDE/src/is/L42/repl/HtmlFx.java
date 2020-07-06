@@ -86,7 +86,7 @@ public class HtmlFx extends StackPane{
     //}
 
     //DOCUMENTATION
-    if(c == KeyCode.PERIOD) {
+    /*if(c == KeyCode.PERIOD) {
       Object o=webEngine.executeScript("ace.edit(\"textArea\").getCursorPosition()");
       assert o instanceof JSObject : o.toString();
       JSObject jsobj=(JSObject)o;
@@ -94,7 +94,7 @@ public class HtmlFx extends StackPane{
       int col=(int)Double.parseDouble(jsobj.getMember("column").toString());
       try { displayDoc(editor,row,col); }
       catch(IllegalArgumentException e) {}
-      }
+      }*/
     //---CTRL+S save
     if (keyEvent.isControlDown() && c == KeyCode.S){
       editor.saveToFile();
