@@ -225,7 +225,7 @@ public class ReplMain {
       var tmp=res.resolve("This.L42");
       Files.createFile(tmp);
       if(!next.equals("This")){Files.write(tmp,("\n"+next+"={...}\n").getBytes());}
-      else{Files.write(res,"\n\n".getBytes());}
+      else{Files.write(tmp,"\n\n".getBytes());}
       openFile(tmp);
       return res;
       }
@@ -239,6 +239,7 @@ public class ReplMain {
       if(Files.exists(res)){return res;}
       Files.createFile(res);
       Files.write(res,"\n\n".getBytes());
+      openFile(res);
       return res;
       }
     catch (IOException e) {throw new Error(e);}
@@ -258,8 +259,6 @@ public class ReplMain {
       else {res=processLast(res,current);}
       count+=1;
       }
-    var fRes=res;
-    openFile(fRes);
     }
   public static final String defaultMain="""
       reuse [AdamTowel]

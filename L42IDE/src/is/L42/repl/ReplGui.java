@@ -47,9 +47,9 @@ public class ReplGui extends Application {
   private static final int SCENE_HEIGHT = 600;
   TabPane tabPane=new TabPane();
   TextArea output=new TextArea();
-  {Resources.setOutHandler(output::appendText);}
+  {Resources.setOutHandler(s->Platform.runLater(()->output.appendText(s)));}
   TextArea errors=new TextArea();
-  {Resources.setErrHandler(errors::appendText);}
+  {Resources.setErrHandler(s->Platform.runLater(()->errors.appendText(s)));}
   //StringBuffer err=new StringBuffer();
   boolean rootPathSet=false;
   boolean running=false;
