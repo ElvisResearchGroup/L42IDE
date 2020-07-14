@@ -159,7 +159,7 @@ var L42HighlightRules = function() {
                             value: val.slice(-1)
                         }];
                 },
-                regex : "[.]??[a-z_$#][a-zA-Z0-9_$]*[\\(|\\[]" // .methodName(
+                regex : "[.]??[_]*[a-z#][a-zA-Z0-9_$#]*[::[0-9]*]??[\\(|\\[]" // .methodName(
             }, {
                 token : function(val) {
                     return [{
