@@ -106,14 +106,14 @@ var L42HighlightRules = function() {
                 next : "comment"
             }, { // Multiline String
                 token : 'string', // Start
-                regex : '["""]$',
+                regex : '"""%*$',
                 push : [
                     {
                         token: 'string',
                         regex:/^(\s*('|\||#|\*).*)/ // middle
                     },{
                         token: 'string',
-                        regex:/^\s*["""]/, // end
+                        regex:/^\s*"""/, // end
                         caseInsensitive:true,
                         next:"pop"
                     },
