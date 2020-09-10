@@ -154,6 +154,16 @@ public class ReplMain {
         var ncs=L(l.ncs().stream().sorted((m1,m2)->m1.key().inner().compareTo(m2.key().inner())));
         super.visitL(l.withMwts(mwts).withNcs(ncs));
         }
+      @Override public void visitDoc(Core.Doc doc){
+        c("@");
+        if(doc._pathSel()!=null){visitPathSel(doc._pathSel());}
+        if(doc.texts().isEmpty()){return;}
+        assert doc.texts().size()==doc.docs().size()+1;
+        c("{");nl();
+        seq(i->c(doc.texts().get(i)),doc.docs(),"");
+        c(doc.texts().get(doc.texts().size()-1));
+        nl();c("}");
+        }
       };
     top.get().accept(v);
     var area=makeReplTextArea("OVERVIEW",v.result().toString());
