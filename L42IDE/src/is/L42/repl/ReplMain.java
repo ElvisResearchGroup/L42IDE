@@ -116,7 +116,6 @@ public class ReplMain {
     catch(IOException e){throw new Error(e);}
     }
   void loadProject(Path path) {
-    System.out.println(path.toAbsolutePath());
     Path thisFile=path.resolve("This.L42");
     List<Path> filesToOpen=Files.exists(thisFile)?
         openProject(path):makeNewProject(path,defaultMain,thisFile);
@@ -175,12 +174,10 @@ public class ReplMain {
     }
   private URL makeUrl(){
     URL url = getClass().getResource("textArea.xhtml");
-    System.out.println("#####\n\n"+url);
     if(url.toString().startsWith("jar:")){
       try{url=Constants.localhost.resolve("textArea.xhtml").toUri().toURL();}
       catch(MalformedURLException e){throw new Error(e);}
       }
-    System.out.println("#####\n\n"+url);
     return url;
     }
   private ReplTextArea makeReplTextArea(String fileName,String tabContent) {
