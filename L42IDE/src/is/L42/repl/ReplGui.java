@@ -1,17 +1,9 @@
 package is.L42.repl;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.nio.file.Files;
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Function;
-
-import is.L42.common.EndError;
-import is.L42.common.Parse;
-import is.L42.generated.P;
 import is.L42.platformSpecific.javaTranslation.Resources;
 import javafx.application.Application;
 import javafx.application.Platform;

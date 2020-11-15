@@ -2,31 +2,22 @@ package is.L42.repl;
 
 import static is.L42.tools.General.L;
 
-import java.util.Optional;
 import java.util.function.Consumer;
-
-import javax.swing.event.HyperlinkEvent.EventType;
-
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
-import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 import javafx.util.Callback;
 import javafx.util.Duration;
 import is.L42.generated.Core;
@@ -106,7 +97,7 @@ public class DocPanel extends VBox{
     for(Core.L.NC nc:cb.ncs()){ns.add(new Cell(nc));}
     setTooltip(label,"Supertypes: "+cb.ts()+"\n"+cb.docs());
     }
-  public void setFull(Full.L cb){
+  private void setFull(Full.L cb){
     for(var m:cb.ms()){
       //TODO:
       }

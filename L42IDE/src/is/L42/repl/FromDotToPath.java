@@ -1,16 +1,12 @@
 package is.L42.repl;
 
-import static is.L42.tools.General.L;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import is.L42.common.Constants;
 import is.L42.common.Parse;
 import is.L42.generated.C;
-import is.L42.generated.P;
 import is.L42.generated.S;
 
 public class FromDotToPath {

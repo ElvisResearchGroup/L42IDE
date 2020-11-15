@@ -1,9 +1,5 @@
 package is.L42.repl;
 
-import java.awt.Toolkit;
-import java.awt.datatransfer.ClipboardOwner;
-import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Consumer;
 import is.L42.common.Program;
@@ -106,6 +102,7 @@ public class HtmlFx extends StackPane{
       }//selecting only the digits would, for example, fail to recognize deletion
   }
 
+  @SuppressWarnings("unused")
   private void displayDoc(ReplTextArea editor, int row, int col) {
     //if(ReplGui.main.repl==null) {return;}
     //editor.setDoc("Row: "+row+" Col: "+col+"\n");

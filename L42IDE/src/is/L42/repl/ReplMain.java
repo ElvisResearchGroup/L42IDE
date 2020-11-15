@@ -4,10 +4,8 @@ import static is.L42.tools.General.L;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -15,19 +13,14 @@ import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import is.L42.common.Constants;
-import is.L42.common.EndError;
 import is.L42.common.Parse;
-import is.L42.common.Program;
 import is.L42.generated.Core;
-import is.L42.generated.P;
 import is.L42.main.Main;
 import is.L42.platformSpecific.javaTranslation.Resources;
 import is.L42.tests.TestCachingCases;
@@ -208,6 +201,7 @@ public class ReplMain {
       Platform.runLater(()->gui.updateTextFields());
       }
     }
+  @SuppressWarnings("unused")
   private static void copyEntireDirectory(Path src, AbsPath dest, String... doNotCopyFiles) {
     try (Stream<Path> stream = Files.list(src)) {
       stream
