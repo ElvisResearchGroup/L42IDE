@@ -234,6 +234,14 @@ public class ReplGui extends Application {
     editor.tab = new Tab();
     editor.tab.setText(editor.filename);
     editor.tab.setContent(editor);
+    editor.setFocusTraversable(true);
+    editor.htmlFx.setFocusTraversable(true);
+    editor.htmlFx.browser.setFocusTraversable(true);
+    editor.tab.setOnSelectionChanged (e ->{
+      if(editor.tab.isSelected()){
+        Platform.runLater(()->editor.htmlFx.browser.requestFocus());
+        }
+      });  
     editor.tab.setOnCloseRequest(t->this.tabOnClose(editor,t));
     tabPane.getTabs().add(editor.tab);
     tabPane.getSelectionModel().select(editor.tab);

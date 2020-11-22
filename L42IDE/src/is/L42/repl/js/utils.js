@@ -58,6 +58,7 @@ var setAllAs=function(className,options){
       l42Box.getSession().foldAll();
       l42Box.getSession().unfold(1,false);
       }
+    l42Box.focus();
     }
   }
 

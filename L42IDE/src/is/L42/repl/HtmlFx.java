@@ -22,6 +22,7 @@ import netscape.javascript.JSObject;
 
 public class HtmlFx extends StackPane{
   public WebEngine webEngine;
+  public WebView browser;
   Region outerPanel;
 
   public HtmlFx(Region outer) {
@@ -32,7 +33,7 @@ public class HtmlFx extends StackPane{
   public final Events events=new Events();
 
   private Void initWeb(CountDownLatch latch,Consumer<WebEngine> load){
-    WebView browser = new WebView();
+    this.browser = new WebView();
     this.webEngine = browser.getEngine();
     this.webEngine.getLoadWorker().stateProperty().addListener(
       (ov, oldState,newState)->{
