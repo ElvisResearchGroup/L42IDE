@@ -1,10 +1,28 @@
 package is.L42.repl;
 
+import static is.L42.tools.General.L;
+
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Consumer;
+
+import is.L42.common.Constants;
+import is.L42.common.Err;
+import is.L42.common.NameMangling;
+import is.L42.common.Parse;
 import is.L42.common.Program;
+import is.L42.generated.Core;
+import is.L42.generated.Full;
+import is.L42.generated.LDom;
 import is.L42.generated.LL;
 import is.L42.generated.P;
+import is.L42.generated.S;
+import is.L42.generated.X;
+import is.L42.repl.CachedInference.FileInference;
+import is.L42.tools.General;
+import is.L42.visitors.UndefinedCollectorVisitor;
+import is.L42.generated.Full.CsP;
+import is.L42.generated.Full.E;
+import is.L42.generated.Full.Par;
 import javafx.application.Platform;
 import javafx.concurrent.Worker;
 import javafx.scene.control.Alert;
@@ -83,7 +101,7 @@ public class HtmlFx extends StackPane{
     //}
 
     //DOCUMENTATION
-    /*if(c == KeyCode.PERIOD) {
+    if(c == KeyCode.PERIOD) {
       Object o=webEngine.executeScript("ace.edit(\"textArea\").getCursorPosition()");
       assert o instanceof JSObject : o.toString();
       JSObject jsobj=(JSObject)o;
@@ -91,7 +109,7 @@ public class HtmlFx extends StackPane{
       int col=(int)Double.parseDouble(jsobj.getMember("column").toString());
       try { displayDoc(editor,row,col); }
       catch(IllegalArgumentException e) {}
-      }*/
+      }
     //---CTRL+S save
     if (keyEvent.isControlDown() && c == KeyCode.S){
       editor.saveToFile();
@@ -103,17 +121,78 @@ public class HtmlFx extends StackPane{
       }//selecting only the digits would, for example, fail to recognize deletion
   }
 
-  @SuppressWarnings("unused")
   private void displayDoc(ReplTextArea editor, int row, int col) {
-    //if(ReplGui.main.repl==null) {return;}
-    //editor.setDoc("Row: "+row+" Col: "+col+"\n");
-    FromDotToPath r=new FromDotToPath(editor.getText(),row,col);
-    Program p=Program.emptyP;//TODO: not working now
-    try{p=p.navigate(r.cs);}
-    catch(Throwable t){throw new IllegalArgumentException(t);}
-    //try {p=p.pop();}catch(Throwable  t) {}
-    LL top=p.top;
-    editor.setDoc(P.of(0,r.cs), top);
+    //row starts from 0 but file lines from 1
+    if(ReplGui.main.cache==null) {return;}
+    var fi = ReplMain.infer.files.get(editor.filename);
+    if (fi==null) {return;}
+    //System.out.println("ROW "+row);
+    //var csP = Parse.csP(Constants.dummy, "Debug").res;
+    //var p = fi._forPath(csP,row);
+    //var meths = Err.options(S.parse("bla()"), p.topCore().mwts());
+    String parsableText=FromDotToPath.parsable(editor.getText(),row,col);
+    try {
+      Full.E e = Parse.e(Constants.dummy, parsableText).res;
+      Program p=inferP(fi,row,e);
+      var meths = Err.options(S.parse("aaa()"), p.topCore().mwts());
+      ReplMain.gui.hints.setText("Row: "+row+" Col: "+col+"\n"+parsableText+"\n"+meths);
+      }
+    catch(Throwable t) {
+      ReplMain.gui.hints.setText("Row: "+row+" Col: "+col+"\n"+parsableText+
+            "\nUnknown type; try to recompile");
+      }
+    }
+
+  private Program inferP(FileInference fi,int row, E e) {
+    Program res[]={null};
+    e.visitable().accept(new UndefinedCollectorVisitor() {
+      void progateSel(Full.E e,S s) {
+        e.visitable().accept(this);
+        var mwt=LDom._elem(res[0].topCore().mwts(),s);
+        res[0]=res[0]._navigate(mwt.mh().t().p().toNCs());
+        }
+      @Override public void visitEX(Core.EX x){
+        res[0]=fi._forX(x.x().inner(), row);
+        }
+      @Override public void visitCsP(Full.CsP csP){
+        res[0]=fi._forPath(csP,row);
+        }
+      @Override public void visitEString(Full.EString e){
+        var e0=e.es().get(0);
+        S s=S.parse("#from(stringLiteral)");
+        progateSel(e0,s);
+        }
+      @Override public void visitUOp(Full.UOp uOp){
+        S s;
+        if(uOp._num()!=null) {s=S.parse("#from(stringLiteral)");}
+        else{
+          String name=NameMangling.methName(uOp._op(),0);
+          s=new S(name,L(),-1);
+          }
+        progateSel(uOp.e(),s);
+        }
+      @Override public void visitBinOp(Full.BinOp binOp){
+        uc();}//TODO:
+      @Override public void visitCast(Full.Cast cast){
+        res[0]=fi._forPath(new Full.CsP(cast.pos(), cast.t().cs(),cast.t()._p()),row);        
+        }
+      @Override public void visitCall(Full.Call call){
+        S s = call._s();
+        if (s==null) {s=S.parse("#apply()");}
+        if(call.isSquare()){s=s.withXs(L(new X("squareBuilder")));}         
+        else{
+          Par p=call.pars().get(0);
+          var xs=p.xs();
+          if (p._that()!=null) {xs=General.pushL(X.thatX,xs);}
+          s=s.withXs(xs);
+          }
+        progateSel(call.e(),s);
+        }
+      @Override public void visitBlock(Full.Block block){
+        block._e().visitable().accept(this);
+        }
+    });
+    return res[0];
   }
 
   public static Error propagateException(Throwable t){

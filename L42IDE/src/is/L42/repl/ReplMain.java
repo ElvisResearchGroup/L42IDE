@@ -1,7 +1,6 @@
 package is.L42.repl;
 
 import static is.L42.tools.General.L;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -27,6 +26,7 @@ import is.L42.tests.TestCachingCases;
 import is.L42.top.CachedTop;
 import javafx.application.Application;
 import javafx.application.Platform;
+
 class AbsPath{ //absolutePath
   final Path inner;
   public AbsPath(Path inner) {
@@ -62,6 +62,11 @@ public class ReplMain {
   static ReplGui gui;//TODO: may be swap them so it is a singleton pattern?
   static AbsPath l42Root=new AbsPath(Path.of(".").toAbsolutePath());
   static ExecutorService executor = Executors.newFixedThreadPool(1);
+  
+  
+  static CachedInference infer=new CachedInference();
+  {Resources.inferenceHandler(infer);}  
+
   CachedTop cache=null;
   public static void main(String []arg) {
     //NOTE TO EXPORT
@@ -119,6 +124,7 @@ public class ReplMain {
     Platform.runLater(()->gui.enableRunB());
     }
   void clearCache(){
+    infer.files.clear();
     try {Files.delete(l42Root.resolve("cache.L42Bytes"));}
     catch(java.nio.file.NoSuchFileException e){/*ignored*/}
     catch (IOException e) {throw new Error(e);}

@@ -3,6 +3,7 @@ package is.L42.repl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import is.L42.common.Constants;
 import is.L42.common.Parse;
@@ -14,6 +15,72 @@ public class FromDotToPath {
   StringBuffer pathString=new StringBuffer();
   List<C> cs;
   List<S> ms=new ArrayList<>();
+  public static String parsable(String text, int row, int col) {
+    int size=0;
+    for(int ri=0;ri<row;ri+=1){
+      size=text.indexOf("\n", size+1);
+      }
+    size+=col+1;
+    int min=Math.max(0,size-500);//500 limiting to 500 chars for now
+    String before=text.substring(min, size).trim();
+    return new StartParsable().of(before);
+    }
+  static class StartParsable{
+    int index;
+    String s;
+    String of(String s){
+      this.s=s;
+      index=s.length();
+      all();
+      return s.substring(index,s.length()).trim(); 
+      }
+    void all() { while(step()>=0); }
+    int skipString(){
+      while (true) {
+        char ci = s.charAt(index-=1);
+        if(ci=='\"' || index<=0){return 0;}
+        }
+      }
+    int skipPar(char endPar){
+      index+=1;
+      while (true) {
+        char ci = s.charAt(index-=1);
+        if(ci=='\"') {skipString();}
+        if(ci==endPar){break;}
+        if(index<=0){break;}
+        }
+      skipSpaces();
+      return index-=1;
+      }
+    int skipSpaces(){
+      index+=1;
+      while (true) {
+        char ci = s.charAt(index-=1);
+        if(ci!=' ' && ci!=',' && ci!='\n' && ci!='\r'){return 0;}
+        if(index<=0){return 0;}
+        }
+      }
+    int base(char ci) {
+      if(Character.isJavaIdentifierPart(ci)){return 0;}
+      index+=1;
+      return -1;
+      }
+    int step() {
+      if(index<=0) {return -1;}
+      char ci = s.charAt(index-=1);
+      return switch(ci){
+        case ')'->skipPar('(');
+        case ']'->skipPar('[');
+        case '}'->skipPar('{');
+        case '\"'->skipString();
+        case '.'->skipSpaces();
+        case '(','[','{'->{index+=1;yield -1;}
+        default -> base(ci);
+        };
+      }
+    public String toString() {return index+"    "+s.substring(0,index);}
+    }
+  
   public FromDotToPath(String text, int row, int col) {
     String[] lines=text.split("\\r?\\n");
     String lineBefore=lines[row].substring(0, col);

@@ -16,19 +16,16 @@ public class ReplTextArea extends SplitPane {
   Tab tab;
   final String filename;
   final HtmlFx htmlFx;
-  private final DocPanel docPanel;
   public ReplTextArea(CountDownLatch latch, String fname, URL url) {
     assert url!=null:"";
     assert Platform.isFxApplicationThread();
     htmlFx=new HtmlFx(this);
     htmlFx.createHtmlContent(latch,wv->wv.load(url.toExternalForm()));
     filename=fname;
-    this.docPanel=new DocPanel();
-    this.getItems().addAll(htmlFx,this.docPanel);
+    this.getItems().addAll(htmlFx);
     this.setDividerPositions(DIVIDER_POSN);
     latch.countDown();
     }
-  public void setDoc(P name,LL cb){docPanel.setLL(name, cb);}
   public String getText(){
     assert Platform.isFxApplicationThread();
     return (String) htmlFx.webEngine.executeScript(

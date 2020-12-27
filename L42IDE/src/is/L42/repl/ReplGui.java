@@ -42,7 +42,7 @@ public class ReplGui extends Application {
   {Resources.setOutHandler(s->Platform.runLater(()->output.appendText(s)));}
   TextArea errors=new TextArea();
   {Resources.setErrHandler(s->Platform.runLater(()->errors.appendText(s)));}
-  //StringBuffer err=new StringBuffer();
+  TextArea hints=new TextArea();
   boolean rootPathSet=false;
   boolean running=false;
   Button runB;
@@ -176,8 +176,10 @@ public class ReplGui extends Application {
     outputPane.setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
     output.setEditable(false);
     errors.setEditable(false);
+    hints.setEditable(false);
     outputPane.getTabs().add(new Tab("output", output));
     outputPane.getTabs().add(new Tab("errors", errors));
+    outputPane.getTabs().add(new Tab("hints", hints));
     SplitPane splitPane = new SplitPane(tabPane, outputPane);
     splitPane.setDividerPositions(0.7f);
     splitPane.setOrientation(Orientation.VERTICAL);
