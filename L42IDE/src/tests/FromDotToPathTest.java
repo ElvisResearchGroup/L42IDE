@@ -26,7 +26,7 @@ class FromDotToPathTest {
         )
       """;
   void ok(String p,int row,int col,String expected){
-    var res=FromDotToPath.parsable(p,row,col);
+    var res=FromDotToPath.parsable(p,row,col,' ');
     assertEquals(expected,res);
     }
   @Test void numLit(){ok(prog1,2,9,"12I");}

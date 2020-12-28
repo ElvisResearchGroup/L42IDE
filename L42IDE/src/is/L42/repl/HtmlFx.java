@@ -2,6 +2,7 @@ package is.L42.repl;
 
 import static is.L42.tools.General.L;
 
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Consumer;
 
@@ -91,25 +92,6 @@ public class HtmlFx extends StackPane{
     if(outerPanel==null || !(outerPanel instanceof ReplTextArea)) {return;}
     var c=keyEvent.getCode();
     ReplTextArea editor=((ReplTextArea)outerPanel);
-    //if (keyEvent.isControlDown() && keyEvent.getCode() == KeyCode.V){
-    //  // PASTE
-    //  Clipboard clipboard = Clipboard.getSystemClipboard();
-    //  String content = (String) clipboard.getContent(DataFormat.PLAIN_TEXT);
-    //  webEngine.executeScript(" pasteContent(\""+
-    //          org.apache.commons.text.StringEscapeUtils
-    //          .escapeEcmaScript(content)+"\") ");
-    //}
-
-    //DOCUMENTATION
-    if(c == KeyCode.PERIOD) {
-      Object o=webEngine.executeScript("ace.edit(\"textArea\").getCursorPosition()");
-      assert o instanceof JSObject : o.toString();
-      JSObject jsobj=(JSObject)o;
-      int row=(int)Double.parseDouble(jsobj.getMember("row").toString());
-      int col=(int)Double.parseDouble(jsobj.getMember("column").toString());
-      try { displayDoc(editor,row,col); }
-      catch(IllegalArgumentException e) {}
-      }
     //---CTRL+S save
     if (keyEvent.isControlDown() && c == KeyCode.S){
       editor.saveToFile();
@@ -119,23 +101,50 @@ public class HtmlFx extends StackPane{
     if(!c.isArrowKey() && !c.isMediaKey() && !c.isModifierKey()){
       editor.addStar(); //file has been modified (NOT SAVED)
       }//selecting only the digits would, for example, fail to recognize deletion
+   
+    //DOCUMENTATION
+    var chS=keyEvent.getText();
+    if(chS.length()!=1) {return;}
+    char ch=chS.charAt(0);
+    var chOk=FromDotToPath.isValidPathChar(ch);
+    if(c == KeyCode.PERIOD || chOk) {
+      Object o=webEngine.executeScript("ace.edit(\"textArea\").getCursorPosition()");
+      assert o instanceof JSObject : o.toString();
+      JSObject jsobj=(JSObject)o;
+      int row=(int)Double.parseDouble(jsobj.getMember("row").toString());
+      int col=(int)Double.parseDouble(jsobj.getMember("column").toString());
+      try { displayDoc(editor,row,col,ch); }
+      catch(Throwable t){
+        t.printStackTrace();
+        }
+      }
   }
 
-  private void displayDoc(ReplTextArea editor, int row, int col) {
+  private void displayDoc(ReplTextArea editor, int row, int col, char last) {
     //row starts from 0 but file lines from 1
     if(ReplGui.main.cache==null) {return;}
     var fi = ReplMain.infer.files.get(editor.filename);
     if (fi==null) {return;}
-    //System.out.println("ROW "+row);
-    //var csP = Parse.csP(Constants.dummy, "Debug").res;
-    //var p = fi._forPath(csP,row);
-    //var meths = Err.options(S.parse("bla()"), p.topCore().mwts());
-    String parsableText=FromDotToPath.parsable(editor.getText(),row,col);
-    try {
+    String parsableText=FromDotToPath.parsable(editor.getText(),row,col,last);
+    S currentHint=S.parse("aaa()");
+    if(last!='.'){
+      try {
+        int i=parsableText.lastIndexOf('.');
+        String hint=parsableText.substring(i+1);
+        parsableText=parsableText.substring(0,i);
+        var options=List.of(hint,"_"+hint,hint+"()","_"+hint+"()");
+        for (var s : options){
+          try{currentHint=S.parse(s);break;}
+          catch(Throwable t){}
+          }
+        }
+      catch(Throwable t){}
+      }
+    try{
       Full.E e = Parse.e(Constants.dummy, parsableText).res;
       Program p=inferP(fi,row,e);
-      var meths = Err.options(S.parse("aaa()"), p.topCore().mwts());
-      ReplMain.gui.hints.setText("Row: "+row+" Col: "+col+"\n"+parsableText+"\n"+meths);
+      var meths = Err.options(currentHint, p.topCore().mwts());
+      ReplMain.gui.hints.setText("Row: "+row+" Col: "+col+"\n"+parsableText+"    hint="+currentHint+"\n"+meths);
       }
     catch(Throwable t) {
       ReplMain.gui.hints.setText("Row: "+row+" Col: "+col+"\n"+parsableText+
