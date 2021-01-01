@@ -201,7 +201,7 @@ public class ReplMain {
     catch (IOException e) {throw new Error(e);}
     finally{
       cache=cache.toNextCache();
-      CacheSaver.saveCache(cache);
+      //TODO: re-enable later CacheSaver.saveCache(cache);
       System.out.println(Resources.notifiedCompiledNC());
       Resources.clearResKeepReuse();
       Platform.runLater(()->gui.updateTextFields());

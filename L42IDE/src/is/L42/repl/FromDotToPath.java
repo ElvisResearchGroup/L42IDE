@@ -1,14 +1,6 @@
 package is.L42.repl;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import is.L42.common.Constants;
-import is.L42.common.Parse;
-import is.L42.generated.C;
-import is.L42.generated.S;
 
 public class FromDotToPath {
   public static String parsable(String text, int row, int col,char last) {
@@ -39,12 +31,15 @@ public class FromDotToPath {
         }
       }
     int skipPar(char endPar){
-      index+=1;
       while (true) {
         char ci = s.charAt(index-=1);
-        if(ci=='\"') {skipString();}
         if(ci==endPar){break;}
         if(index<=0){break;}
+        if(ci=='\"') {skipString();}
+        if(ci==')') {skipPar('(');}
+        if(ci==']') {skipPar('[');}
+        if(ci=='}') {skipPar('{');}
+
         }
       skipSpaces();
       return index-=1;
@@ -58,7 +53,7 @@ public class FromDotToPath {
         }
       }
     int base(char ci) {
-      if(FromDotToPath.isValidPathChar(ci)){return 0;}
+      if(FromDotToPath.isValidIdChar(ci)){return 0;}
       index+=1;
       return -1;
       }
@@ -85,7 +80,8 @@ public class FromDotToPath {
   }
 
 
-  public static boolean isValidPathChar(char c) {
+  public static boolean isValidIdChar(char c) {
+    if(c == '#'){return true;}
     if(c == '$'){return true;}
     if(c == '_'){return true;}
     if(c == '\t'){return false;}
@@ -112,8 +108,7 @@ public class FromDotToPath {
       if (c1 == '#'){return false;}
       }
     for(char c : s.toCharArray()){
-      if(allowHash && c == '#'){continue;}
-      if(isValidPathChar(c)){continue;}
+      if(isValidIdChar(c)){continue;}
       return false;
       }
     return c0 == '_' || c0 == '#' || (c0 >= 'a' && c0 <= 'z');
@@ -136,7 +131,7 @@ public class FromDotToPath {
     if(isValidPrimitiveName(name)){return false;}
     if(!isValidPathStart(name.charAt(0))){return false;}
     for(int i = 1; i < name.length(); i++){
-      if(!isValidPathChar(name.charAt(i))){return false;}
+      if(name.charAt(i)=='#' || !isValidIdChar(name.charAt(i))){return false;}
       }
     return true;
     }

@@ -23,6 +23,8 @@ class FromDotToPathTest {
         12I.mod(3I)
         x=A.foo()
         x+=A.foo()+B.bar()
+        x+=A.#foo(\\baz)
+        c.addSeed(\\(x=x, y=0\\), val=\\.true())
         )
       """;
   void ok(String p,int row,int col,String expected){
@@ -45,5 +47,7 @@ class FromDotToPathTest {
   @Test void meth(){ok(prog1,11,13,"12I.mod(3I)");}
   @Test void methEq(){ok(prog1,12,11,"A.foo()");}
   @Test void methPlus(){ok(prog1,13,20,"B.bar()");}
-
+  @Test void hash(){ok(prog1,14,19,"A.#foo(\\baz)");}
+  @Test void innerSlash(){ok(prog1,15,39,"c.addSeed(\\(x=x, y=0\\), val=\\.true())");}
+  
 }
