@@ -28,6 +28,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -43,6 +45,13 @@ public class ReplGui extends Application {
   TextArea errors=new TextArea();
   {Resources.setErrHandler(s->Platform.runLater(()->errors.appendText(s)));}
   TextArea hints=new TextArea();
+  {
+    //System.out.println(Font.getFontNames());
+    var font=Font.font("Andale Mono");
+    output.setFont(font);
+    errors.setFont(font);
+    hints.setFont(font);
+  }
   boolean rootPathSet=false;
   boolean running=false;
   Button runB;
