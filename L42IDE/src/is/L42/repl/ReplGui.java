@@ -47,11 +47,14 @@ public class ReplGui extends Application {
   TextArea hints=new TextArea();
   {
     //System.out.println(Font.getFontNames());
-    var font=Font.font("Andale Mono");
-    output.setFont(font);
-    errors.setFont(font);
-    hints.setFont(font);
-  }
+    //var monos=Font.getFontNames().stream().filter(s->s.contains("Mono") || s.contains("mono")).findFirst();
+    //if(!monos.isEmpty()){
+    //var font=Font.font(monos.get());
+    //output.setFont(font);
+    output.setStyle("-fx-font-family: 'monospaced';");
+    errors.setStyle("-fx-font-family: 'monospaced';");
+    hints.setStyle("-fx-font-family: 'monospaced';");
+    }
   boolean rootPathSet=false;
   boolean running=false;
   Button runB;
