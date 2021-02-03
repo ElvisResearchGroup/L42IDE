@@ -202,7 +202,6 @@ public class ReplMain {
     finally{
       cache=cache.toNextCache();
       //TODO: re-enable later CacheSaver.saveCache(cache);
-      System.out.println(Resources.notifiedCompiledNC());
       Resources.clearResKeepReuse();
       Platform.runLater(()->gui.updateTextFields());
       }
@@ -262,7 +261,6 @@ public class ReplMain {
     if(isFolder){r=r+"This";}
     var ns=List.of(r.split("/"));
     if(ns.isEmpty()) {return;}
-    System.out.println(ns);
     var res=ReplMain.l42Root.inner;
     int count=0;
     while(count<ns.size()){

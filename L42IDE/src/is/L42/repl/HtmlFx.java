@@ -123,7 +123,6 @@ public class HtmlFx extends StackPane{
   private void displayDoc(ReplTextArea editor, int row, int col, char last) {
     //row starts from 0 but file lines from 1
     if(ReplGui.main.cache==null) {return;}
-    ReplMain.infer.files.keySet().forEach(n->System.out.println(n));
     var fi = ReplMain.infer.files.get(editor.filename);
     if (fi==null) {return;}
     String parsableText=FromDotToPath.parsable(editor.getText(),row,col,last);
