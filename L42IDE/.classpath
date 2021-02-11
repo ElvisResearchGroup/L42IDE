@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/L42"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/L42Compiler"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-15">
 		<attributes>
 			<attribute name="module" value="true"/>
@@ -15,7 +15,6 @@
 	<classpathentry kind="lib" path="C:/Users/sonta/Desktop/Java15/javafx-sdk-15.0.1/lib/javafx.swing.jar"/>
 	<classpathentry kind="lib" path="C:/Users/sonta/Desktop/Java15/javafx-sdk-15.0.1/lib/javafx.web.jar"/>
 	<classpathentry kind="lib" path="C:/Users/sonta/Desktop/Java15/javafx-sdk-15.0.1/lib/javafx-swt.jar"/>
-	<classpathentry kind="lib" path="/L42/guava-28.2-jre.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

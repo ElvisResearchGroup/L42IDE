@@ -7,23 +7,20 @@ import java.util.concurrent.CountDownLatch;
 import java.util.function.Consumer;
 
 import is.L42.common.Constants;
-import is.L42.common.Err;
+import is.L42.common.ErrMsg;
 import is.L42.common.NameMangling;
 import is.L42.common.Parse;
 import is.L42.common.Program;
 import is.L42.generated.Core;
 import is.L42.generated.Full;
+import is.L42.generated.Full.E;
+import is.L42.generated.Full.Par;
 import is.L42.generated.LDom;
-import is.L42.generated.LL;
-import is.L42.generated.P;
 import is.L42.generated.S;
 import is.L42.generated.X;
 import is.L42.repl.CachedInference.FileInference;
 import is.L42.tools.General;
 import is.L42.visitors.UndefinedCollectorVisitor;
-import is.L42.generated.Full.CsP;
-import is.L42.generated.Full.E;
-import is.L42.generated.Full.Par;
 import javafx.application.Platform;
 import javafx.concurrent.Worker;
 import javafx.scene.control.Alert;
@@ -143,7 +140,7 @@ public class HtmlFx extends StackPane{
     try{
       Full.E e = Parse.e(Constants.dummy, parsableText).res;
       Program p=inferP(fi,row,e);
-      var meths = Err.options(currentHint, p.topCore().mwts());
+      var meths = ErrMsg.options(currentHint, p.topCore().mwts());
       ReplMain.gui.hints.setText("Row: "+row+" Col: "+col+"\n"+parsableText+"    hint="+currentHint+"\n"+meths);
       }
     catch(Throwable t) {
