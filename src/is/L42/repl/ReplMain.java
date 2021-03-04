@@ -75,7 +75,7 @@ public class ReplMain {
     //-We put a localhost folder containing adamTowel, sifo and also the textArea.xhtml and js and css folders
     URL url = ReplMain.class.getResource("textArea.xhtml");
     if(url.toString().startsWith("jar:")){Constants.localhost=Paths.get("localhost");}
-    else{Constants.localhost=Paths.get("..","..","L42","localhost");}
+    else{Constants.localhost=Paths.get("..","L42","localhost");}
     ReplGui.main=new ReplMain();
     Application.launch(ReplGui.class,arg);
     }
