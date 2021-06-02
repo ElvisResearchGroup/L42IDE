@@ -9,7 +9,7 @@ import is.L42.repl.FromDotToPath;
 class FromDotToPathTest {
 
   String prog1="""
-      reuse [AdamTowel]
+      reuse [L42.is/AdamsTowel]
       Main = (
         i = 12I
         Debug(S"hi %i").foo().bar()

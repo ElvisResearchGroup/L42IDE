@@ -272,7 +272,7 @@ public class ReplMain {
       }
     }
   public static final String defaultMain="""
-      reuse [AdamTowel]
+      reuse [L42.is/AdamsTowel]
       Main=(
         Debug(S"Hello world")
         )

@@ -192,7 +192,7 @@ var L42HighlightRules = function() {
                             value: val.slice("reuse".length)
                         }];
                 },
-                regex : "reuse\\s{1,}[^\{\}\\s]*" // resuse l42.is/AdamTowel
+                regex : "reuse\\s{1,}[^\{\}\\s]*" // reuse [L42.is/AdamsTowel]
             }, {
                 token : keywordMapper,
                 regex : "[a-zA-Z_$][a-zA-Z0-9_$]*\\b"
