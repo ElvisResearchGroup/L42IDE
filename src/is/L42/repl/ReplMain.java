@@ -68,11 +68,16 @@ public class ReplMain {
   {Resources.inferenceHandler(infer);}  
 
   CachedTop cache=null;
-  public static void main(String []arg) {
+  public static void main(String []arg) throws IOException {
     //NOTE TO EXPORT
+    //option 1
     //-We export runnable jar (with jars in a folder next)
     //-We put the bin folder next
     //-We put a localhost folder containing adamTowel, sifo and also the textArea.xhtml and js and css folders
+    //option 2
+    //-We export runnable jar (with jars expanded)
+    //-We put the bin folder content directly inside the jar toplevel
+    if (arg.length!=0) {Main.main(arg);return;}
     URL url = ReplMain.class.getResource("textArea.xhtml");
     if(url.toString().startsWith("jar:")){Constants.localhost=Paths.get("localhost");}
     else{Constants.localhost=Paths.get("..","L42","localhost");}
@@ -172,12 +177,14 @@ public class ReplMain {
     Platform.runLater(area.htmlFx::foldAll);
     }
   private URL makeUrl(){
-    URL url = getClass().getResource("textArea.xhtml");
+    /*URL url = getClass().getResource("textArea.xhtml");
     if(url.toString().startsWith("jar:")){
       try{url=Constants.localhost.resolve("textArea.xhtml").toUri().toURL();}
       catch(MalformedURLException e){throw new Error(e);}
       }
-    return url;
+    return url;*/
+    try {return new URL("http://L42.is/jsIDE/textArea.xhtml");}
+    catch(MalformedURLException e){throw new Error(e);}
     }
   private ReplTextArea makeReplTextArea(String fileName,String tabContent) {
     URL url = makeUrl();

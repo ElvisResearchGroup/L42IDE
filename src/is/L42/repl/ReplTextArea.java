@@ -5,8 +5,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.CountDownLatch;
-import is.L42.generated.LL;
-import is.L42.generated.P;
 import javafx.application.Platform;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;

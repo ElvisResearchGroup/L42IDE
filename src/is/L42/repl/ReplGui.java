@@ -28,8 +28,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -133,7 +131,7 @@ public class ReplGui extends Application {
         if(t.getText().equals("OVERVIEW")){continue;}
         if(t.getText().equals("OVERVIEW*")){continue;}
         if(t.getText().endsWith("*")){
-          System.out.println("Saving: " + t.getText());
+          //System.out.println("Saving: " + t.getText());
           ReplTextArea editor = (ReplTextArea)t.getContent();
           editor.saveToFile();
           editor.removeStar();
@@ -220,7 +218,7 @@ public class ReplGui extends Application {
     running=false;
     runB.setDisable(false);
     runB.setText("Run!");
-    System.out.println("Finished");
+    //System.out.println("Finished");
   }
   void disableRunB() {
     running=true;
