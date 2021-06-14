@@ -22,7 +22,6 @@ import is.L42.common.Parse;
 import is.L42.generated.Core;
 import is.L42.main.Main;
 import is.L42.platformSpecific.javaTranslation.Resources;
-import is.L42.tests.TestCachingCases;
 import is.L42.top.CachedTop;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -200,11 +199,7 @@ public class ReplMain {
       gui.errors.setText("");
       gui.output.setText("");
       });
-    try{
-      long start1=System.currentTimeMillis();
-      TestCachingCases.last=start1;
-      Main.run(l42Root.resolve("This.L42"),cache);
-      }
+    try{Main.run(l42Root.resolve("This.L42"),cache);}
     catch (IOException e) {throw new Error(e);}
     finally{
       cache=cache.toNextCache();
