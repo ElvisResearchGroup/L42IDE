@@ -67,6 +67,8 @@ public class HtmlFx extends StackPane{
       });
 
     browser.addEventHandler(KeyEvent.KEY_PRESSED, this::handleKeyPress);
+    browser.addEventHandler(KeyEvent.KEY_TYPED, this::handleKeyTyped);
+    //browser.setOnK
 
     // retrieve copy event via javascript:alert
     /*webEngine.setOnAlert((WebEvent<String> we) -> {
@@ -84,7 +86,22 @@ public class HtmlFx extends StackPane{
     latch.countDown();
     return null;
     }
-
+  private void handleKeyTyped(KeyEvent keyEvent) {
+    var c=keyEvent.getCode();
+    ReplTextArea editor=((ReplTextArea)outerPanel);
+    var chS=keyEvent.getCharacter();
+    if(chS.length()!=1) {return;}
+    char ch=chS.charAt(0);
+    var chOk=FromDotToPath.isValidIdChar(ch);
+    //if(ch == '.' || c==KeyCode.PERIOD || chOk) {
+    Object o=webEngine.executeScript("ace.edit(\"textArea\").getCursorPosition()");
+    assert o instanceof JSObject : o.toString();
+    JSObject jsobj=(JSObject)o;
+    int row=(int)Double.parseDouble(jsobj.getMember("row").toString());
+    int col=(int)Double.parseDouble(jsobj.getMember("column").toString());
+    try{ displayHint(editor,row,col,ch); }
+    catch(Throwable t){t.printStackTrace();}
+    }    
   private void handleKeyPress(KeyEvent keyEvent) {
     if(outerPanel==null || !(outerPanel instanceof ReplTextArea)) {return;}
     var c=keyEvent.getCode();
@@ -98,32 +115,15 @@ public class HtmlFx extends StackPane{
     if(!c.isArrowKey() && !c.isMediaKey() && !c.isModifierKey()){
       editor.addStar(); //file has been modified (NOT SAVED)
       }//selecting only the digits would, for example, fail to recognize deletion
-   
-    //DOCUMENTATION
-    var chS=keyEvent.getText();
-    if(chS.length()!=1) {return;}
-    char ch=chS.charAt(0);
-    var chOk=FromDotToPath.isValidIdChar(ch);
-    if(c == KeyCode.PERIOD || chOk) {
-      Object o=webEngine.executeScript("ace.edit(\"textArea\").getCursorPosition()");
-      assert o instanceof JSObject : o.toString();
-      JSObject jsobj=(JSObject)o;
-      int row=(int)Double.parseDouble(jsobj.getMember("row").toString());
-      int col=(int)Double.parseDouble(jsobj.getMember("column").toString());
-      try { displayDoc(editor,row,col,ch); }
-      catch(Throwable t){
-        t.printStackTrace();
-        }
-      }
-  }
-
-  private void displayDoc(ReplTextArea editor, int row, int col, char last) {
+    }
+  private static final S aaaHint=S.parse("aaa()");
+  private void displayHint(ReplTextArea editor, int row, int col, char last) {
     //row starts from 0 but file lines from 1
     if(ReplGui.main.cache==null) {return;}
     var fi = ReplMain.infer.files.get(editor.filename);
     if (fi==null) {return;}
     String parsableText=FromDotToPath.parsable(editor.getText(),row,col,last);
-    S currentHint=S.parse("aaa()");
+    S currentHint=aaaHint;
     if(last!='.'){
       try {
         int i=parsableText.lastIndexOf('.');
@@ -141,7 +141,14 @@ public class HtmlFx extends StackPane{
       Full.E e = Parse.e(Constants.dummy, parsableText).res;
       Program p=inferP(fi,row,e);
       var meths = ErrMsg.options(currentHint, p.topCore().mwts());
-      ReplMain.gui.hints.setText("Row: "+row+" Col: "+col+"\n"+parsableText+"    hint="+currentHint+"\n"+meths);
+      var h="";
+      if(currentHint!=aaaHint){h="    hint="+currentHint;}
+      ReplMain.gui.hints.setText(
+        "Row: "+row+
+        " Col: "+col+
+        "\n"+parsableText+
+        h+
+        "\n"+meths);
       }
     catch(Throwable t) {
       ReplMain.gui.hints.setText("Row: "+row+" Col: "+col+"\n"+parsableText+
