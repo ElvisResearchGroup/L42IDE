@@ -11,6 +11,7 @@ import is.L42.generated.Core;
 import is.L42.generated.Core.EX;
 import is.L42.generated.Core.L.MWT;
 import is.L42.generated.Full.CsP;
+import is.L42.generated.X;
 import is.L42.platformSpecific.javaTranslation.Resources;
 import is.L42.top.Init;
 
@@ -28,6 +29,13 @@ class CachedInference implements Resources.InferenceHandler{
     var name=ReplMain.l42Root.relativize(Paths.get(fName)).toString();
     var fi = files.computeIfAbsent(name,n->new FileInference());
     fi.forPath.add(mwt._e(), p);
+    var thisX=new EX(mwt._e().pos(),X.thisX);
+    this.ex(thisX, p);
+    for(var i:range(mwt.mh().key().xs())){
+      var exi=new EX(mwt._e().pos(),mwt.mh().key().xs().get(i));
+      var pi=mwt.mh().pars().get(i).p();
+      if(pi.isNCs()){ this.ex(exi, p.navigate(pi.toNCs())); }
+      }
     }
   public void nc(Core.E e, Program p) {
     var fName = e.pos().fileName();
