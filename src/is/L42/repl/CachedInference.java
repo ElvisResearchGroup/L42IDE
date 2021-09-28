@@ -9,9 +9,9 @@ import java.util.HashMap;
 import is.L42.common.Program;
 import is.L42.generated.Core;
 import is.L42.generated.Core.EX;
-import is.L42.generated.Core.L.MWT;
+import is.L42.generated.Core.MWT;
 import is.L42.generated.Full.CsP;
-import is.L42.generated.X;
+import is.L42.flyweight.*;
 import is.L42.platformSpecific.javaTranslation.Resources;
 import is.L42.top.Init;
 

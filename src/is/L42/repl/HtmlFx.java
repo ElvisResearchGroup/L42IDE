@@ -17,7 +17,7 @@ import is.L42.generated.Full.E;
 import is.L42.generated.Full.Par;
 import is.L42.generated.LDom;
 import is.L42.generated.S;
-import is.L42.generated.X;
+import is.L42.flyweight.*;
 import is.L42.repl.CachedInference.FileInference;
 import is.L42.tools.General;
 import is.L42.visitors.UndefinedCollectorVisitor;
@@ -192,7 +192,7 @@ public class HtmlFx extends StackPane{
       @Override public void visitCall(Full.Call call){
         S s = call._s();
         if (s==null) {s=S.parse("#apply()");}
-        if(call.isSquare()){s=s.withXs(L(new X("squareBuilder")));}         
+        if(call.isSquare()){s=s.withXs(L(X.of("squareBuilder")));}         
         else{
           Par p=call.pars().get(0);
           var xs=p.xs();

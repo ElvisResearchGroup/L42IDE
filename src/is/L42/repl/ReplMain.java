@@ -19,6 +19,7 @@ import java.util.stream.Stream;
 
 import is.L42.common.Constants;
 import is.L42.common.Parse;
+import is.L42.flyweight.CoreL;
 import is.L42.generated.Core;
 import is.L42.main.Main;
 import is.L42.platformSpecific.javaTranslation.Resources;
@@ -153,9 +154,9 @@ public class ReplMain {
     var top=this.cache.lastTopL();//not always working, cache may not "store" the last step?
     if(top.isEmpty()){makeReplTextArea("OVERVIEW","{}");return;}
     var v=new is.L42.introspection.FullS(){
-      @Override public void visitInfo(Core.L.Info info){}
+      @Override public void visitInfo(Core.Info info){}
       @Override public boolean headerNewLine(){return true;}
-      @Override public void visitL(Core.L l){
+      @Override public void visitL(CoreL l){
         var mwts=L(l.mwts().stream().sorted((m1,m2)->m1.key().toString().compareTo(m2.key().toString())));
         var ncs=L(l.ncs().stream().sorted((m1,m2)->m1.key().inner().compareTo(m2.key().inner())));
         super.visitL(l.withMwts(mwts).withNcs(ncs));
