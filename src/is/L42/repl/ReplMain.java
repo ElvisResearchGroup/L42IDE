@@ -121,7 +121,7 @@ public class ReplMain {
   void loadProject(Path path) {
     Path thisFile=path.resolve("This.L42");
     List<Path> filesToOpen=Files.exists(thisFile)?
-        openProject(path):makeNewProject(path,defaultMain,thisFile);
+        openProject(path):makeNewProject(path,Main.defaultMain,thisFile);
     l42Root=new AbsPath(path);
     gui.rootPathSet=true;
     for(Path file:filesToOpen){openFileInNewTab(file);}
@@ -274,10 +274,4 @@ public class ReplMain {
       count+=1;
       }
     }
-  public static final String defaultMain="""
-      reuse [L42.is/AdamsTowel]
-      Main=(
-        Debug(S"Hello world")
-        )
-      """;//in the bottom, so it does not mess up line numbers
   }
