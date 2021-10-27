@@ -1,0 +1,3 @@
+Manifest-Version: 1.0
+Main-Class: is.L42.repl.ReplMain
+Class-Path: . L42_lib/antlr-4.7.2-complete.jar L42_lib/guava-31.0.1-jre.jar L42_lib/jna.jar L42_lib/safeNativeCode.jar L42_lib/failureaccess-1.0.1.jar L42_lib/javafx.base.jar L42_lib/javafx.controls.jar L42_lib/javafx.fxml.jar L42_lib/javafx.graphics.jar L42_lib/javafx.media.jar L42_lib/javafx.swing.jar L42_lib/javafx.web.jar L42_lib/javafx-swt.jar
