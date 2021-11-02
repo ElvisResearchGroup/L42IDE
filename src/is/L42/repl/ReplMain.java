@@ -177,14 +177,14 @@ public class ReplMain {
     Platform.runLater(area.htmlFx::foldAll);
     }
   private URL makeUrl(){
-    /*URL url = getClass().getResource("textArea.xhtml");
+    URL url = getClass().getResource("textArea.xhtml");
     if(url.toString().startsWith("jar:")){
       try{url=Constants.localhost.resolve("textArea.xhtml").toUri().toURL();}
       catch(MalformedURLException e){throw new Error(e);}
       }
-    return url;*/
-    try {return new URL("http://L42.is/jsIDE/textArea.xhtml");}
-    catch(MalformedURLException e){throw new Error(e);}
+    return url;
+    //try {return new URL("http://L42.is/jsIDE/textArea.xhtml");}
+    //catch(MalformedURLException e){throw new Error(e);}
     }
   private ReplTextArea makeReplTextArea(String fileName,String tabContent) {
     URL url = makeUrl();
