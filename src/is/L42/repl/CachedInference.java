@@ -16,14 +16,14 @@ import is.L42.platformSpecific.javaTranslation.Resources;
 import is.L42.top.Init;
 
 class CachedInference implements Resources.InferenceHandler{
-  public void ex(EX ex, Program p) {
+  public void ex(EX ex, Program p) {try{
     var fName = ex.pos().fileName();
     var name=ReplMain.l42Root.relativize(Paths.get(fName)).toString();
     var fi = files.computeIfAbsent(name,n->new FileInference());
     var ep = fi.xs.computeIfAbsent(ex.x().inner(),n->new EProg());
     ep.add(ex, p);
-    }
-  public void mwt(MWT mwt, Program p) {
+    }catch(Throwable t) {}}
+  public void mwt(MWT mwt, Program p) {try{
     if(mwt._e()==null) {return;}
     var fName = mwt._e().pos().fileName();
     var name=ReplMain.l42Root.relativize(Paths.get(fName)).toString();
@@ -36,13 +36,13 @@ class CachedInference implements Resources.InferenceHandler{
       var pi=mwt.mh().pars().get(i).p();
       if(pi.isNCs()){ this.ex(exi, p.navigate(pi.toNCs())); }
       }
-    }
-  public void nc(Core.E e, Program p) {
+    }catch(Throwable t) {}}
+  public void nc(Core.E e, Program p) {try{
     var fName = e.pos().fileName();
     var name=ReplMain.l42Root.relativize(Paths.get(fName)).toString();
     var fi = files.computeIfAbsent(name,n->new FileInference());
     fi.forPath.add(e, p);
-  }
+    }catch(Throwable t) {}}
   HashMap<String,FileInference> files = new HashMap<>();
   public String toString() {return files.toString();}
   record EProg(ArrayList<Core.E>es,ArrayList<Program>ps){
