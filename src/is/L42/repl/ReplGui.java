@@ -43,6 +43,7 @@ public class ReplGui extends Application {
   TextArea errors=new TextArea();
   {Resources.setErrHandler(s->Platform.runLater(()->errors.appendText(s)));}
   TextArea hints=new TextArea();
+  DisplayTests tests=new DisplayTests();
   {
     //System.out.println(Font.getFontNames());
     //var monos=Font.getFontNames().stream().filter(s->s.contains("Mono") || s.contains("mono")).findFirst();
@@ -52,7 +53,7 @@ public class ReplGui extends Application {
     output.setStyle("-fx-font-family: 'monospaced';");
     errors.setStyle("-fx-font-family: 'monospaced';");
     hints.setStyle("-fx-font-family: 'monospaced';");
-    }
+    }  
   boolean rootPathSet=false;
   boolean running=false;
   Button runB;
@@ -127,6 +128,7 @@ public class ReplGui extends Application {
     runB=new Button("Run!");
     runB.setDisable(true);
     runB.setOnAction(e->{
+      tests.reset();
       for (Tab t : tabPane.getTabs()) {
         if(t.getText().equals("OVERVIEW")){continue;}
         if(t.getText().equals("OVERVIEW*")){continue;}
@@ -190,6 +192,8 @@ public class ReplGui extends Application {
     outputPane.getTabs().add(new Tab("output", output));
     outputPane.getTabs().add(new Tab("errors", errors));
     outputPane.getTabs().add(new Tab("hints", hints));
+    outputPane.getTabs().add(new Tab("OK", tests.passedTests));
+    outputPane.getTabs().add(new Tab("KO", tests.failedTests));
     SplitPane splitPane = new SplitPane(tabPane, outputPane);
     splitPane.setDividerPositions(0.7f);
     splitPane.setOrientation(Orientation.VERTICAL);
