@@ -185,6 +185,8 @@ public class ReplMain {
     //URL url = makeUrl();
     //assert url!=null:"";
     URL url = getClass().getResource("textArea.xhtml");
+    System.out.println(url.toExternalForm());
+    System.out.println(url.toString());
     String content;try{content=new String(Files.readAllBytes(Path.of(url.toURI())));}
     catch (IOException | URISyntaxException e1){ throw new Error(e1); }
     int i=content.indexOf("<head>\n");
