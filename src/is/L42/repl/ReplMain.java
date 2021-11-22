@@ -200,15 +200,17 @@ public class ReplMain {
     return editor;
     }
   String jarUrlToOutside(URL url){
+    System.out.println(url);
     String res=url.toExternalForm();
     res=res.substring(4);
+    System.out.println(url);
     //res=res.replace("L42.jar!/is/L42/repl/","");
-    int i=res.lastIndexOf("L42.jar!/is/L42/repl/", 0);
+    int i=res.lastIndexOf("L42.jar!/is/L42/repl/", res.length()-1);
     assert i!=-1: res+" of unexpected form";
     res=res.substring(0,i)+res.substring(i+"L42.jar!/is/L42/repl/".length());
     return res;
     //file:/am/roxy/home/servetto/git/L42IDE/bin/is/L42/repl/textArea.xhtml
-    //jar:file:/home/servetto/git/L42DeployScripts/L42PortableLinux/L42Internals/L42.jar!/is/L42/repl/textArea.xhtml
+//file:/home/servetto/git/L42DeployScripts/L42PortableLinux/L42Internals/L42.jar!/is/L42/repl/textArea.xhtml
     //IN  jar:file:/home/servetto/git/L42DeployScripts/L42PortableLinux/L42Internals/L42.jar!/is/L42/repl/textArea.xhtml
     //OUT file:/home/servetto/git/L42DeployScripts/L42PortableLinux/L42Internals/textArea.xhtml
     // remove 4, search and remove "L42.jar!/is/L42/repl/"
