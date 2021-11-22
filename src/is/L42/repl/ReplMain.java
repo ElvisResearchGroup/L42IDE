@@ -190,9 +190,12 @@ public class ReplMain {
     int i=content.indexOf("<head>\n");
     String contentStart=content.substring(0,i+8);
     String contentEnd=content.substring(i+8);
-    String base=url.toExternalForm();
-    //if(url.toString().startsWith("jar:")){ base=""; }
-    //else { base=""; }
+    String base;
+    System.out.println(url.toExternalForm());
+    System.out.println(url.toString());
+    //file:/am/roxy/home/servetto/git/L42IDE/bin/is/L42/repl/textArea.xhtml
+    if(url.toString().startsWith("jar:")){ base=""; }
+    else { base=url.toExternalForm(); }
     String baseTag="<base href=\""+base+"\" target=\"_blank\">";
     ReplTextArea editor=ReplGui.runAndWait(4,l->new ReplTextArea(l,fileName,contentStart+baseTag+contentEnd));
     Platform.runLater(()->gui.openTab(editor,tabContent));
