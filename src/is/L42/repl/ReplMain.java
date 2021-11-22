@@ -4,8 +4,8 @@ import static is.L42.tools.General.L;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -185,14 +185,15 @@ public class ReplMain {
     //URL url = makeUrl();
     //assert url!=null:"";
     URL url = getClass().getResource("textArea.xhtml");
-    String content;try{content=new String(Files.readAllBytes(Path.of(url.toURI())));}
-    catch (IOException | URISyntaxException e1){ throw new Error(e1); }
-    int i=content.indexOf("<head>\n");
-    String contentStart=content.substring(0,i+8);
-    String contentEnd=content.substring(i+8);
     String base;
     if(url.toExternalForm().startsWith("jar:")){ base=jarUrlToOutside(url); }
     else { base=url.toExternalForm(); }
+    String content;try{content=new String(Files.readAllBytes(Paths.get(URI.create(base))));}
+    catch (IOException e1){ throw new Error(e1); }
+    int i=content.indexOf("<head>\n");
+    String contentStart=content.substring(0,i+8);
+    String contentEnd=content.substring(i+8);
+    
     String baseTag="<base href=\""+base+"\" target=\"_blank\">";
     ReplTextArea editor=ReplGui.runAndWait(4,l->new ReplTextArea(l,fileName,contentStart+baseTag+contentEnd));
     Platform.runLater(()->gui.openTab(editor,tabContent));
