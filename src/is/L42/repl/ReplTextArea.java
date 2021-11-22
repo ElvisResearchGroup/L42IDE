@@ -14,11 +14,11 @@ public class ReplTextArea extends SplitPane {
   Tab tab;
   final String filename;
   final HtmlFx htmlFx;
-  public ReplTextArea(CountDownLatch latch, String fname, URL url) {
-    assert url!=null:"";
+  public ReplTextArea(CountDownLatch latch, String fname, String content) {
+    assert content!=null:"";
     assert Platform.isFxApplicationThread();
     htmlFx=new HtmlFx(this);
-    htmlFx.createHtmlContent(latch,wv->wv.load(url.toExternalForm()));
+    htmlFx.createHtmlContent(latch,wv->wv.loadContent(content));
     filename=fname;
     this.getItems().addAll(htmlFx);
     this.setDividerPositions(DIVIDER_POSN);
