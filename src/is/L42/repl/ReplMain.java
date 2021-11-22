@@ -185,25 +185,33 @@ public class ReplMain {
     //URL url = makeUrl();
     //assert url!=null:"";
     URL url = getClass().getResource("textArea.xhtml");
-    System.out.println(url.toExternalForm());
-    System.out.println(url.toString());
     String content;try{content=new String(Files.readAllBytes(Path.of(url.toURI())));}
     catch (IOException | URISyntaxException e1){ throw new Error(e1); }
     int i=content.indexOf("<head>\n");
     String contentStart=content.substring(0,i+8);
     String contentEnd=content.substring(i+8);
     String base;
-    System.out.println(url.toExternalForm());
-    System.out.println(url.toString());
-    //file:/am/roxy/home/servetto/git/L42IDE/bin/is/L42/repl/textArea.xhtml
-    if(url.toString().startsWith("jar:")){ base=""; }
+    if(url.toExternalForm().startsWith("jar:")){ base=jarUrlToOutside(url); }
     else { base=url.toExternalForm(); }
     String baseTag="<base href=\""+base+"\" target=\"_blank\">";
     ReplTextArea editor=ReplGui.runAndWait(4,l->new ReplTextArea(l,fileName,contentStart+baseTag+contentEnd));
     Platform.runLater(()->gui.openTab(editor,tabContent));
     return editor;
     }
-
+  String jarUrlToOutside(URL url){
+    String res=url.toExternalForm();
+    res=res.substring(4);
+    //res=res.replace("L42.jar!/is/L42/repl/","");
+    int i=res.lastIndexOf("L42.jar!/is/L42/repl/", 0);
+    assert i!=-1: res+" of unexpected form";
+    res=res.substring(0,i)+res.substring(i+"L42.jar!/is/L42/repl/".length());
+    return res;
+    //file:/am/roxy/home/servetto/git/L42IDE/bin/is/L42/repl/textArea.xhtml
+    //jar:file:/home/servetto/git/L42DeployScripts/L42PortableLinux/L42Internals/L42.jar!/is/L42/repl/textArea.xhtml
+    //IN  jar:file:/home/servetto/git/L42DeployScripts/L42PortableLinux/L42Internals/L42.jar!/is/L42/repl/textArea.xhtml
+    //OUT file:/home/servetto/git/L42DeployScripts/L42PortableLinux/L42Internals/textArea.xhtml
+    // remove 4, search and remove "L42.jar!/is/L42/repl/"
+    }
   void runCode(){
     assert gui.running:"not running-runCode";
     Platform.runLater(()->{
