@@ -3,7 +3,6 @@ package is.L42.repl;
 import static is.L42.tools.General.L;
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URI;
 import java.nio.file.Files;
@@ -177,13 +176,7 @@ public class ReplMain {
     var area=makeReplTextArea("OVERVIEW",v.result().toString());
     Platform.runLater(area.htmlFx::foldAll);
     }
-  private URL makeUrl(){
-    try {return new URL("http://L42.is/jsIDE/textArea.xhtml");}
-    catch(MalformedURLException e){throw new Error(e);}
-    }
   private ReplTextArea makeReplTextArea(String fileName,String tabContent) {
-    //URL url = makeUrl();
-    //assert url!=null:"";
     URL url = getClass().getResource("textArea.xhtml");
     String base;
     if(url.toExternalForm().startsWith("jar:")){ base=jarUrlToOutside(url); }
@@ -192,8 +185,7 @@ public class ReplMain {
     catch (IOException e1){ throw new Error(e1); }
     int i=content.indexOf("<head>\n");
     String contentStart=content.substring(0,i+8);
-    String contentEnd=content.substring(i+8);
-    
+    String contentEnd=content.substring(i+8);    
     String baseTag="<base href=\""+base+"\" target=\"_blank\">";
     ReplTextArea editor=ReplGui.runAndWait(4,l->new ReplTextArea(l,fileName,contentStart+baseTag+contentEnd));
     Platform.runLater(()->gui.openTab(editor,tabContent));
@@ -204,13 +196,11 @@ public class ReplMain {
     String res=url.toExternalForm();
     res=res.substring(4);
     System.out.println(url);
-    //res=res.replace("L42.jar!/is/L42/repl/","");
+    //res=res.replace("L42.jar!/is/L42/repl/","");//This would be risky if the string happens multiple times
     int i=res.lastIndexOf("L42.jar!/is/L42/repl/", res.length()-1);
     assert i!=-1: res+" of unexpected form";
     res=res.substring(0,i)+res.substring(i+"L42.jar!/is/L42/repl/".length());
     return res;
-    //file:/am/roxy/home/servetto/git/L42IDE/bin/is/L42/repl/textArea.xhtml
-//file:/home/servetto/git/L42DeployScripts/L42PortableLinux/L42Internals/L42.jar!/is/L42/repl/textArea.xhtml
     //IN  jar:file:/home/servetto/git/L42DeployScripts/L42PortableLinux/L42Internals/L42.jar!/is/L42/repl/textArea.xhtml
     //OUT file:/home/servetto/git/L42DeployScripts/L42PortableLinux/L42Internals/textArea.xhtml
     // remove 4, search and remove "L42.jar!/is/L42/repl/"
