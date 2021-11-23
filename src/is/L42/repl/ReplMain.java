@@ -1,6 +1,5 @@
 package is.L42.repl;
 
-import static is.L42.tools.General.L;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -12,6 +11,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
@@ -19,11 +19,8 @@ import java.util.stream.Stream;
 
 import is.L42.common.Constants;
 import is.L42.common.Parse;
-import is.L42.flyweight.CoreL;
-import is.L42.generated.Core;
 import is.L42.main.Main;
 import is.L42.platformSpecific.javaTranslation.Resources;
-import is.L42.top.CachedTop;
 import javafx.application.Application;
 import javafx.application.Platform;
 
@@ -63,20 +60,7 @@ public class ReplMain {
   static AbsPath l42Root=new AbsPath(Path.of(".").toAbsolutePath());
   static ExecutorService executor = Executors.newFixedThreadPool(1);
   
-  
-  static CachedInference infer=new CachedInference();
-  {Resources.inferenceHandler(infer);}  
-
-  CachedTop cache=null;
   public static void main(String []arg) throws IOException {
-    //NOTE TO EXPORT
-    //option 1
-    //-We export runnable jar (with jars in a folder next)
-    //-We put the bin folder next
-    //-We put a localhost folder containing adamTowel, sifo and also the textArea.xhtml and js and css folders
-    //option 2
-    //-We export runnable jar (with jars expanded)
-    //-We put the bin folder content directly inside the jar toplevel
     if (arg.length!=0) {Main.main(arg);return;}
     URL url = ReplMain.class.getResource("textArea.xhtml");
     if(url.toString().startsWith("jar:")){Constants.localhost=Paths.get("localhost");}
@@ -125,16 +109,16 @@ public class ReplMain {
     l42Root=new AbsPath(path);
     gui.rootPathSet=true;
     for(Path file:filesToOpen){openFileInNewTab(file);}
-    cache=CachedTop.loadCache(path);
+    //cache=CachedTop.loadCache(path);
     Platform.runLater(()->gui.enableRunB());
     }
-  void clearCache(){
+  /*void clearCache(){
     infer.files.clear();
     try {Files.delete(l42Root.resolve("cache.L42Bytes"));}
-    catch(java.nio.file.NoSuchFileException e){/*ignored*/}
+    catch(java.nio.file.NoSuchFileException e){}//ignored
     catch (IOException e) {throw new Error(e);}
     this.cache=CachedTop.loadCache(l42Root.inner);
-    }
+    }*/
   void openFile(Path file) {
     if(Files.exists(file) && l42Root.isChild(file)){openFileInNewTab(file);}
     else{displayError("File not in Project","The selected file is not in the current project");}
@@ -150,30 +134,15 @@ public class ReplMain {
     String openFileName = l42Root.relativize(file).toString();
     makeReplTextArea(openFileName,content);
     }
+  String overviewText=null;
+  void loadOverview(){
+    var newOverviewText=GuiData.overviewString();
+    if(overviewText==null){ overviewText=newOverviewText; }
+    if(newOverviewText!=null){ overviewText=newOverviewText; }
+    }
   void openOverview(){
-    var top=this.cache.lastTopL();//not always working, cache may not "store" the last step?
-    if(top.isEmpty()){makeReplTextArea("OVERVIEW","{}");return;}
-    var v=new is.L42.introspection.FullS(){
-      @Override public void visitInfo(Core.Info info){}
-      @Override public boolean headerNewLine(){return true;}
-      @Override public void visitL(CoreL l){
-        var mwts=L(l.mwts().stream().sorted((m1,m2)->m1.key().toString().compareTo(m2.key().toString())));
-        var ncs=L(l.ncs().stream().sorted((m1,m2)->m1.key().inner().compareTo(m2.key().inner())));
-        super.visitL(l.withMwts(mwts).withNcs(ncs));
-        }
-      @Override public void visitDoc(Core.Doc doc){
-        c("@");
-        if(doc._pathSel()!=null){visitPathSel(doc._pathSel());}
-        if(doc.texts().isEmpty()){return;}
-        assert doc.texts().size()==doc.docs().size()+1;
-        c("{");nl();
-        seq(i->c(doc.texts().get(i)),doc.docs(),"");
-        c(doc.texts().get(doc.texts().size()-1));
-        nl();c("}");
-        }
-      };
-    top.get().accept(v);
-    var area=makeReplTextArea("OVERVIEW",v.result().toString());
+    loadOverview();
+    var area=makeReplTextArea("OVERVIEW",overviewText==null?"":overviewText);
     Platform.runLater(area.htmlFx::foldAll);
     }
   private ReplTextArea makeReplTextArea(String fileName,String tabContent) {
@@ -211,14 +180,10 @@ public class ReplMain {
       gui.errors.setText("");
       gui.output.setText("");
       });
-    try{Main.run(l42Root.resolve("This.L42"),cache);}
-    catch (IOException e) {throw new Error(e);}
-    finally{
-      cache=cache.toNextCache();
-      //TODO: re-enable later CacheSaver.saveCache(cache);
-      Resources.clearResKeepReuse();
-      Platform.runLater(()->gui.updateTextFields());
-      }
+    Path topPath=l42Root.resolve("This.L42");
+    //CachedTop cache=return new CachedTop(L(),L());//CachedTop.loadCache(path);
+    try{GuiData.start42(topPath);}
+    catch(CancellationException ce){}
     }
   @SuppressWarnings("unused")
   private static void copyEntireDirectory(Path src, AbsPath dest, String... doNotCopyFiles) {

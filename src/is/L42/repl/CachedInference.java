@@ -2,6 +2,7 @@ package is.L42.repl;
 
 import static is.L42.tools.General.range;
 
+import java.io.Serializable;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,7 +19,7 @@ import is.L42.top.Init;
 class CachedInference implements Resources.InferenceHandler{
   public void ex(EX ex, Program p) {try{
     var fName = ex.pos().fileName();
-    var name=ReplMain.l42Root.relativize(Paths.get(fName)).toString();
+    var name=RunningData.l42Root.relativize(Paths.get(fName)).toString();
     var fi = files.computeIfAbsent(name,n->new FileInference());
     var ep = fi.xs.computeIfAbsent(ex.x().inner(),n->new EProg());
     ep.add(ex, p);
@@ -26,7 +27,7 @@ class CachedInference implements Resources.InferenceHandler{
   public void mwt(MWT mwt, Program p) {try{
     if(mwt._e()==null) {return;}
     var fName = mwt._e().pos().fileName();
-    var name=ReplMain.l42Root.relativize(Paths.get(fName)).toString();
+    var name=RunningData.l42Root.relativize(Paths.get(fName)).toString();
     var fi = files.computeIfAbsent(name,n->new FileInference());
     fi.forPath.add(mwt._e(), p);
     var thisX=new EX(mwt._e().pos(),X.thisX);
@@ -39,7 +40,7 @@ class CachedInference implements Resources.InferenceHandler{
     }catch(Throwable t) {}}
   public void nc(Core.E e, Program p) {try{
     var fName = e.pos().fileName();
-    var name=ReplMain.l42Root.relativize(Paths.get(fName)).toString();
+    var name=RunningData.l42Root.relativize(Paths.get(fName)).toString();
     var fi = files.computeIfAbsent(name,n->new FileInference());
     fi.forPath.add(e, p);
     }catch(Throwable t) {}}

@@ -12,7 +12,9 @@ var doOnLoad=function (){
       mode:"ace/mode/l42",
       theme:"ace/theme/l42_eclipse",
       tabSize: 100,
-      useSoftTabs: true, 
+      useSoftTabs: true,
+      behavioursEnabled: false,
+      wrapBehavioursEnabled: false,
       });
   setOurMinMax();
   window.onresize=function(){setTimeout(setOurMinMax, 100);};

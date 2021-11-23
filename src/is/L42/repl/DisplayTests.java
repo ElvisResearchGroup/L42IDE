@@ -1,7 +1,7 @@
 package is.L42.repl;
 
-import is.L42.platformSpecific.javaTranslation.Resources;
-import javafx.application.Platform;
+import java.util.List;
+
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.scene.control.ScrollPane;
@@ -42,7 +42,6 @@ public class DisplayTests {
     failText.setStyle(red);
     _passedTests.getChildren().addAll(passText);
     _failedTests.getChildren().addAll(failText);
-    Resources.setTestHandler(s->Platform.runLater(()->handler(s)));
     }
   void reset(){
     this.passed=0;
@@ -55,7 +54,8 @@ public class DisplayTests {
     _passedTests.getChildren().addAll(passText);
     _failedTests.getChildren().addAll(failText);
     }
-  void handler(String s){
+  void handle(List<String> ss){ for(String s : ss){handle(s);} }
+  void handle(String s){
     tests+=1;
     var pass=isPass(s);
     if(pass) {passed+=1;} else {failed+=1;}

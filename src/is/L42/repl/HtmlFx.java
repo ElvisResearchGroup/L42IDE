@@ -116,98 +116,12 @@ public class HtmlFx extends StackPane{
       editor.addStar(); //file has been modified (NOT SAVED)
       }//selecting only the digits would, for example, fail to recognize deletion
     }
-  private static final S aaaHint=S.parse("aaa()");
   private void displayHint(ReplTextArea editor, int row, int col, char last) {
     //row starts from 0 but file lines from 1
-    if(ReplGui.main.cache==null) {return;}
-    var fi = ReplMain.infer.files.get(editor.filename);
-    if (fi==null) {return;}
-    String parsableText=FromDotToPath.parsable(editor.getText(),row,col,last);
-    S currentHint=aaaHint;
-    if(last!='.'){
-      try {
-        int i=parsableText.lastIndexOf('.');
-        String hint=parsableText.substring(i+1);
-        parsableText=parsableText.substring(0,i);
-        var options=List.of(hint,"_"+hint,hint+"()","_"+hint+"()");
-        for (var s : options){
-          try{currentHint=S.parse(s);break;}
-          catch(Throwable t){}
-          }
-        }
-      catch(Throwable t){}
-      }
-    try{
-      Full.E e = Parse.e(Constants.dummy, parsableText).res;
-      Program p=inferP(fi,row,e);
-      var meths = ErrMsg.options(currentHint, p.topCore().mwts());
-      var h="";
-      if(currentHint!=aaaHint){h="    hint="+currentHint;}
-      ReplMain.gui.hints.setText(
-        "Row: "+row+
-        " Col: "+col+
-        "\n"+parsableText+
-        h+
-        "\n"+meths);
-      }
-    catch(Throwable t) {
-      ReplMain.gui.hints.setText("Row: "+row+" Col: "+col+"\n"+parsableText+
-            "\nUnknown type; try to recompile");
-      }
+    String filename=editor.filename;
+    String parsabletext=FromDotToPath.parsable(editor.getText(),row,col,last);
+    ReplMain.gui.hints.setText(GuiData.computeHint(row,col,last,filename,parsabletext));
     }
-
-  private Program inferP(FileInference fi,int row, E e) {
-    Program res[]={null};
-    e.visitable().accept(new UndefinedCollectorVisitor() {
-      void progateSel(Full.E e,S s) {
-        e.visitable().accept(this);
-        var mwt=LDom._elem(res[0].topCore().mwts(),s);
-        res[0]=res[0]._navigate(mwt.mh().t().p().toNCs());
-        }
-      @Override public void visitEX(Core.EX x){
-        res[0]=fi._forX(x.x().inner(), row);
-        }
-      @Override public void visitCsP(Full.CsP csP){
-        res[0]=fi._forPath(csP,row);
-        }
-      @Override public void visitEString(Full.EString e){
-        var e0=e.es().get(0);
-        S s=S.parse("#from(stringLiteral)");
-        progateSel(e0,s);
-        }
-      @Override public void visitUOp(Full.UOp uOp){
-        S s;
-        if(uOp._num()!=null) {s=S.parse("#from(stringLiteral)");}
-        else{
-          String name=NameMangling.methName(uOp._op(),0);
-          s=new S(name,L(),-1);
-          }
-        progateSel(uOp.e(),s);
-        }
-      @Override public void visitBinOp(Full.BinOp binOp){
-        uc();}//TODO:
-      @Override public void visitCast(Full.Cast cast){
-        res[0]=fi._forPath(new Full.CsP(cast.pos(), cast.t().cs(),cast.t()._p()),row);        
-        }
-      @Override public void visitCall(Full.Call call){
-        S s = call._s();
-        if (s==null) {s=S.parse("#apply()");}
-        if(call.isSquare()){s=s.withXs(L(X.of("squareBuilder")));}         
-        else{
-          Par p=call.pars().get(0);
-          var xs=p.xs();
-          if (p._that()!=null) {xs=General.pushL(X.thatX,xs);}
-          s=s.withXs(xs);
-          }
-        progateSel(call.e(),s);
-        }
-      @Override public void visitBlock(Full.Block block){
-        block._e().visitable().accept(this);
-        }
-    });
-    return res[0];
-  }
-
   public static Error propagateException(Throwable t){
     if (t instanceof RuntimeException){throw (RuntimeException)t;}
     if (t instanceof Error){throw (Error)t;}

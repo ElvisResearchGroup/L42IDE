@@ -39,9 +39,7 @@ public class ReplGui extends Application {
   private static final int SCENE_HEIGHT = 600;
   TabPane tabPane=new TabPane();
   TextArea output=new TextArea();
-  {Resources.setOutHandler(s->Platform.runLater(()->output.appendText(s)));}
   TextArea errors=new TextArea();
-  {Resources.setErrHandler(s->Platform.runLater(()->errors.appendText(s)));}
   TextArea hints=new TextArea();
   DisplayTests tests=new DisplayTests();
   {
@@ -129,20 +127,23 @@ public class ReplGui extends Application {
     runB.setDisable(true);
     runB.setOnAction(e->{
       tests.reset();
-      for (Tab t : tabPane.getTabs()) {
-        if(t.getText().equals("OVERVIEW")){continue;}
-        if(t.getText().equals("OVERVIEW*")){continue;}
-        if(t.getText().endsWith("*")){
-          //System.out.println("Saving: " + t.getText());
-          ReplTextArea editor = (ReplTextArea)t.getContent();
-          editor.saveToFile();
-          editor.removeStar();
-          }
-        }
+      saveAll();
       assert !running: "was running-buttonRunPressed";
       disableRunB();
       ReplMain.runLater(()->main.runCode());
       });
+    }
+  private void saveAll() {
+    for (Tab t : tabPane.getTabs()) {
+      if(t.getText().equals("OVERVIEW")){continue;}
+      if(t.getText().equals("OVERVIEW*")){continue;}
+      if(t.getText().endsWith("*")){
+        //System.out.println("Saving: " + t.getText());
+        ReplTextArea editor = (ReplTextArea)t.getContent();
+        editor.saveToFile();
+        editor.removeStar();
+        }
+      }
     }
   private void mkRefreshBtn(Stage primaryStage){
     refreshB=new Button("Refresh");
@@ -158,8 +159,9 @@ public class ReplGui extends Application {
     openOverviewBtn.setOnAction(t->ReplMain.runLater(main::openOverview));
     }
   private void mkClearCacheBtn(Stage primaryStage){
-    clearCacheBtn=new Button("ClearCache");
-    clearCacheBtn.setOnAction(t->ReplMain.runLater(main::clearCache));
+    clearCacheBtn=new Button("Terminate and ClearCache");
+    //clearCacheBtn.setOnAction(t->ReplMain.runLater(main::clearCache));
+    clearCacheBtn.setOnAction(t->GuiData.terminate42());
     }
   @Override
   public void start(Stage primaryStage) throws Exception {
@@ -179,7 +181,7 @@ public class ReplGui extends Application {
     Pane empty=new Pane();
     HBox.setHgrow(empty, Priority.ALWAYS);
     ToolBar toolbar = new ToolBar(
-      loadProjectBtn, openFileBtn, refreshB,openOverviewBtn,clearCacheBtn,newFileBtn, empty, runB);
+      loadProjectBtn, openFileBtn, refreshB,openOverviewBtn,newFileBtn, empty,clearCacheBtn, runB);
     borderPane.setTop(toolbar);
     //System.setOut(delegatePrintStream(out,System.out));
     //System.setErr(delegatePrintStream(err,System.err));
@@ -280,17 +282,6 @@ public class ReplGui extends Application {
     alert.setContentText(content);
     alert.showAndWait();
   }
-  void updateTextFields(){//TODO: bad name; also, now out is handled separatly.
-    /*try{
-      assert err!=null:"a";
-      assert errors!=null:"b";
-      String newErr=err.toString();
-      errors.setText(newErr);
-      }
-    finally{*/
-      this.enableRunB();
-     // }
-    }
   /*
   public static PrintStream delegatePrintStream(StringBuffer err,PrintStream prs){
     return new PrintStream(prs){
