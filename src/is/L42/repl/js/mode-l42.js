@@ -81,6 +81,17 @@ var oop = require("../lib/oop");
 var DocCommentHighlightRules = require("./doc_comment_highlight_rules").DocCommentHighlightRules;
 var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
 
+var newLineR=/$/;
+var allCharsNoCurly =
+  /([a-z]|[A-Z]|[0-9]|\~|\`|\!|@|#|\$|%|\^|&|\*|\(|\)|_|\-|\+|\=| |\||\\|\[|\]|\:|\;|\'|\"|\<|\>|\,|\.|\/|\?)*/;
+var openDoc = /@{/;
+var closedDoc = /\}/;
+var curly1 = new RegExp(/{/.source + allCharsNoCurly.source + closedDoc.source);
+var curlyNL = new RegExp(/{/.source + allCharsNoCurly.source + newLineR.source);
+//var openDocR = new RegExp(openDoc.source + allCharsNoCurly.source);
+//var allCharsAndClose = new RegExp(allCharsNoCurly.source + closedDoc.source);
+//var openCloseDocR = new RegExp(openDoc.source + allCharsNoCurly.source+closedDoc.source);
+
 var L42HighlightRules = function() {
     var keywords =
         "refine|method|interface|reuse|return|error|exception|in|if|while|for|whoops|catch|class|imm|fwd|mut|lent|read|capsule|var|loop|else|void";
@@ -126,6 +137,44 @@ var L42HighlightRules = function() {
                         regex:/^\s*"""/, // end
                         caseInsensitive:true,
                         next:"pop"
+                    },
+                    {defaultToken:"errorHighlight"} // Everything else that does not match
+                ]
+            }, { // Multiline doc
+                token : 'string', // Start
+                regex : openDoc,
+                push : [
+                    {
+                        token: 'string',
+                        regex:closedDoc, // end
+                        next:"pop"                 
+                    },{    
+                        token: 'string',
+                        regex:newLineR
+                    },{    
+                        token: 'string',
+                        regex:curly1
+                    },{    
+                        token: 'string',
+                        regex:curlyNL,
+                        push : [{
+                        token: 'string',
+                        regex:closedDoc, // end
+                        next:"pop"
+                        },{
+                        token: 'string',
+                        regex:curly1
+                        },{
+                        token: 'string',
+                        regex:newLineR
+                        },{
+                        token: 'string',
+                        regex:allCharsNoCurly // middle
+                        }]
+                    },{
+                        token: 'string',
+                        regex:allCharsNoCurly // middle
+                 
                     },
                     {defaultToken:"errorHighlight"} // Everything else that does not match
                 ]
