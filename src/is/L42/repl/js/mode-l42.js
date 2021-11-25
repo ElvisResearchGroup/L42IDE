@@ -81,17 +81,39 @@ var oop = require("../lib/oop");
 var DocCommentHighlightRules = require("./doc_comment_highlight_rules").DocCommentHighlightRules;
 var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
 
-var newLineR=/$/;
-var allCharsNoCurly =
-  /([a-z]|[A-Z]|[0-9]|\~|\`|\!|@|#|\$|%|\^|&|\*|\(|\)|_|\-|\+|\=| |\||\\|\[|\]|\:|\;|\'|\"|\<|\>|\,|\.|\/|\?)*/;
+//var allCharsNoCurly =
+//  /([a-z]|[A-Z]|[0-9]|\~|\`|\!|@|#|\$|%|\^|&|\*|\(|\)|_|\-|\+|\=| |\||\\|\[|\]|\:|\;|\'|\"|\<|\>|\,|\.|\/|\?)*/;
 var openDoc = /@{/;
+var openC = /{/;
 var closedDoc = /\}/;
-var curly1 = new RegExp(/{/.source + allCharsNoCurly.source + closedDoc.source);
-var curlyNL = new RegExp(/{/.source + allCharsNoCurly.source + newLineR.source);
-//var openDocR = new RegExp(openDoc.source + allCharsNoCurly.source);
-//var allCharsAndClose = new RegExp(allCharsNoCurly.source + closedDoc.source);
-//var openCloseDocR = new RegExp(openDoc.source + allCharsNoCurly.source+closedDoc.source);
+//var curly1 = new RegExp(/{/.source + allCharsNoCurly.source + closedDoc.source); //shows how to concat regexes
 
+var nestedDoc=[{
+  token: 'string',
+  regex:closedDoc,
+  next:"pop"
+  },{
+  token: 'string',
+  regex:openC,
+  push : "nestedDoc"
+  },{
+  defaultToken:'string'
+  }];  
+var multiLineDoc ={ // Multiline doc
+  token : 'string', // Start
+  regex : openDoc,
+  push : [{
+    token: 'string',
+    regex:closedDoc,
+    next:"pop"           
+    },{
+    token: 'string',
+    regex:openC,
+    push : nestedDoc
+    },{
+    defaultToken:'string'
+    }]
+  };
 var L42HighlightRules = function() {
     var keywords =
         "refine|method|interface|reuse|return|error|exception|in|if|while|for|whoops|catch|class|imm|fwd|mut|lent|read|capsule|var|loop|else|void";
@@ -101,6 +123,7 @@ var L42HighlightRules = function() {
     }, "identifier");
 
     this.$rules = {
+        "nestedDoc":nestedDoc,
         "start" : [{
               token : function(val) {
                 return [{
@@ -140,45 +163,9 @@ var L42HighlightRules = function() {
                     },
                     {defaultToken:"errorHighlight"} // Everything else that does not match
                 ]
-            }, { // Multiline doc
-                token : 'string', // Start
-                regex : openDoc,
-                push : [
-                    {
-                        token: 'string',
-                        regex:closedDoc, // end
-                        next:"pop"                 
-                    },{    
-                        token: 'string',
-                        regex:newLineR
-                    },{    
-                        token: 'string',
-                        regex:curly1
-                    },{    
-                        token: 'string',
-                        regex:curlyNL,
-                        push : [{
-                        token: 'string',
-                        regex:closedDoc, // end
-                        next:"pop"
-                        },{
-                        token: 'string',
-                        regex:curly1
-                        },{
-                        token: 'string',
-                        regex:newLineR
-                        },{
-                        token: 'string',
-                        regex:allCharsNoCurly // middle
-                        }]
-                    },{
-                        token: 'string',
-                        regex:allCharsNoCurly // middle
-                 
-                    },
-                    {defaultToken:"errorHighlight"} // Everything else that does not match
-                ]
-            }, {
+            }, 
+            multiLineDoc,
+            {
                 token : function(val) {
                     return [{
                         type: "errorHighlight",

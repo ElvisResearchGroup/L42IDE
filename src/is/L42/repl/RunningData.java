@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 import is.L42.common.Constants;
 import is.L42.common.EndError;
@@ -16,7 +17,6 @@ import is.L42.common.ErrMsg;
 import is.L42.common.NameMangling;
 import is.L42.common.Parse;
 import is.L42.common.Program;
-import is.L42.flyweight.CoreL;
 import is.L42.flyweight.X;
 import is.L42.generated.Core;
 import is.L42.generated.Full;
@@ -179,26 +179,9 @@ public class RunningData {
   static String overviewString(){
     var top=cache.lastTopL();
     if(top.isEmpty()){ return null; }
-    var v=new is.L42.introspection.FullS(){
-      @Override public void visitInfo(Core.Info info){}
-      @Override public boolean headerNewLine(){return true;}
-      @Override public void visitL(CoreL l){
-        var mwts=L(l.mwts().stream().sorted((m1,m2)->m1.key().toString().compareTo(m2.key().toString())));
-        var ncs=L(l.ncs().stream().sorted((m1,m2)->m1.key().inner().compareTo(m2.key().inner())));
-        super.visitL(l.withMwts(mwts).withNcs(ncs));
-        }
-      @Override public void visitDoc(Core.Doc doc){
-        c("@");
-        if(doc._pathSel()!=null){visitPathSel(doc._pathSel());}
-        if(doc.texts().isEmpty()){return;}
-        assert doc.texts().size()==doc.docs().size()+1;
-        c("{");nl();
-        seq(i->c(doc.texts().get(i)),doc.docs(),"");
-        c(doc.texts().get(doc.texts().size()-1));
-        nl();c("}");
-        }
-      };
+    var v=new OverviewVisitor();
     top.get().accept(v);
-    return v.result().toString();
+    String res=v.result().substring(2,v.result().length()-4);
+    return res.lines().map(l->l.substring(2)).collect(Collectors.joining("\n"));
     }
   }
