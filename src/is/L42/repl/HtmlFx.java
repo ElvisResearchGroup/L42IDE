@@ -1,26 +1,8 @@
 package is.L42.repl;
 
-import static is.L42.tools.General.L;
-
-import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Consumer;
 
-import is.L42.common.Constants;
-import is.L42.common.ErrMsg;
-import is.L42.common.NameMangling;
-import is.L42.common.Parse;
-import is.L42.common.Program;
-import is.L42.generated.Core;
-import is.L42.generated.Full;
-import is.L42.generated.Full.E;
-import is.L42.generated.Full.Par;
-import is.L42.generated.LDom;
-import is.L42.generated.S;
-import is.L42.flyweight.*;
-import is.L42.repl.CachedInference.FileInference;
-import is.L42.tools.General;
-import is.L42.visitors.UndefinedCollectorVisitor;
 import javafx.application.Platform;
 import javafx.concurrent.Worker;
 import javafx.scene.control.Alert;
@@ -87,12 +69,12 @@ public class HtmlFx extends StackPane{
     return null;
     }
   private void handleKeyTyped(KeyEvent keyEvent) {
-    var c=keyEvent.getCode();
+    //var c=keyEvent.getCode();
     ReplTextArea editor=((ReplTextArea)outerPanel);
     var chS=keyEvent.getCharacter();
     if(chS.length()!=1) {return;}
     char ch=chS.charAt(0);
-    var chOk=FromDotToPath.isValidIdChar(ch);
+    //var chOk=FromDotToPath.isValidIdChar(ch);
     //if(ch == '.' || c==KeyCode.PERIOD || chOk) {
     Object o=webEngine.executeScript("ace.edit(\"textArea\").getCursorPosition()");
     assert o instanceof JSObject : o.toString();

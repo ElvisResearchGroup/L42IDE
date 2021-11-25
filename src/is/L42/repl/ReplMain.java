@@ -20,7 +20,6 @@ import java.util.stream.Stream;
 import is.L42.common.Constants;
 import is.L42.common.Parse;
 import is.L42.main.Main;
-import is.L42.platformSpecific.javaTranslation.Resources;
 import javafx.application.Application;
 import javafx.application.Platform;
 
@@ -161,10 +160,8 @@ public class ReplMain {
     return editor;
     }
   String jarUrlToOutside(URL url){
-    System.out.println(url);
     String res=url.toExternalForm();
     res=res.substring(4);
-    System.out.println(url);
     //res=res.replace("L42.jar!/is/L42/repl/","");//This would be risky if the string happens multiple times
     int i=res.lastIndexOf("L42.jar!/is/L42/repl/", res.length()-1);
     assert i!=-1: res+" of unexpected form";

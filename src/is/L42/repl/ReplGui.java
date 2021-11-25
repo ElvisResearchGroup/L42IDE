@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Function;
-import is.L42.platformSpecific.javaTranslation.Resources;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.Event;
@@ -31,7 +30,7 @@ import javafx.scene.layout.Region;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-//import profiling.Timer;
+
 
 public class ReplGui extends Application {
   static ReplMain main;
@@ -138,7 +137,6 @@ public class ReplGui extends Application {
       if(t.getText().equals("OVERVIEW")){continue;}
       if(t.getText().equals("OVERVIEW*")){continue;}
       if(t.getText().endsWith("*")){
-        //System.out.println("Saving: " + t.getText());
         ReplTextArea editor = (ReplTextArea)t.getContent();
         editor.saveToFile();
         editor.removeStar();
@@ -224,7 +222,6 @@ public class ReplGui extends Application {
     running=false;
     runB.setDisable(false);
     runB.setText("Run!");
-    //System.out.println("Finished");
   }
   void disableRunB() {
     running=true;

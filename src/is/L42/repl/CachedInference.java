@@ -2,7 +2,6 @@ package is.L42.repl;
 
 import static is.L42.tools.General.range;
 
-import java.io.Serializable;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;

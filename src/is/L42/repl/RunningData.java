@@ -4,7 +4,6 @@ import static is.L42.tools.General.L;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.net.URI;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -83,11 +82,8 @@ public class RunningData {
     }
   private static final S aaaHint=S.parse("aaa()");
   static public String computeHint(int row, int col, char last,String filename,String parsabletext) {
-    System.out.println("computing hint");
     var fi = infer.files.get(filename);
     if (fi==null){
-      
-      System.out.println("computing hint0"+infer.files.keySet()+filename);
       return "Row: "+row+" Col: "+col+"\n"+parsabletext+
         "\nUnknown type; try to recompile";
       }
@@ -111,7 +107,6 @@ public class RunningData {
       var meths = ErrMsg.options(currentHint, p.topCore().mwts());
       var h="";
       if(currentHint!=aaaHint){h="    hint="+currentHint;}
-      System.out.println("computing hint1");
       return
         "Row: "+row+
         " Col: "+col+
@@ -120,7 +115,6 @@ public class RunningData {
         "\n"+meths;
       }
     catch(Throwable t) {
-      System.out.println("computing hint2");
       return "Row: "+row+" Col: "+col+"\n"+parsabletext+
             "\nUnknown type; try to recompile";
       }  
