@@ -12,6 +12,8 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import javafx.application.Platform;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import safeNativeCode.slave.Slave;
 import safeNativeCode.slave.host.ProcessSlave;
 
@@ -47,6 +49,15 @@ public class GuiData {
       ReplMain.gui.output.appendText(pingedData.out());
       ReplMain.gui.errors.appendText(pingedData.err());
       ReplMain.gui.tests.handle(pingedData.tests());
+      var someErr=!pingedData.err().isEmpty();
+      var someOut=!pingedData.out().isEmpty();
+      var someTests=!pingedData.tests().isEmpty();
+      if(someErr){ ReplMain.gui.selectErr(); return; }
+      if(someOut){ ReplMain.gui.selectOut(); return; }
+      if(!someTests){ return; }
+      var someFail=!pingedData.tests().stream().allMatch(DisplayTests::isPass);
+      if(someFail){ ReplMain.gui.selectFail(); return; }
+      if(ReplMain.gui.tests.failed==0){ ReplMain.gui.selectPass(); }
       });
     }
   private static int max=200_000;

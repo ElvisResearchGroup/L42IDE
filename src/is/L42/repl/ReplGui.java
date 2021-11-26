@@ -71,7 +71,7 @@ public class ReplGui extends Application {
     try {latch.await();}
     catch (InterruptedException e) {throw HtmlFx.propagateException(e);}
     return (T)res[0];
-    }
+    }  
   private void mkLoadProjectBtn(Stage primaryStage){
     loadProjectBtn = new Button("Load Project");
     loadProjectBtn.setOnAction(t->{
@@ -189,11 +189,11 @@ public class ReplGui extends Application {
     output.setEditable(false);
     errors.setEditable(false);
     hints.setEditable(false);
-    outputPane.getTabs().add(new Tab("output", output));
-    outputPane.getTabs().add(new Tab("errors", errors));
-    outputPane.getTabs().add(new Tab("hints", hints));
-    outputPane.getTabs().add(new Tab("OK", tests.passedTests));
-    outputPane.getTabs().add(new Tab("KO", tests.failedTests));
+    outputPane.getTabs().add(new Tab("output", output));//0
+    outputPane.getTabs().add(new Tab("errors", errors));//1
+    outputPane.getTabs().add(new Tab("hints", hints));//2
+    outputPane.getTabs().add(new Tab("OK", tests.passedTests));//3
+    outputPane.getTabs().add(new Tab("KO", tests.failedTests));//4
     SplitPane splitPane = new SplitPane(tabPane, outputPane);
     splitPane.setDividerPositions(0.7f);
     splitPane.setOrientation(Orientation.VERTICAL);
@@ -206,7 +206,22 @@ public class ReplGui extends Application {
     primaryStage.show();
     ReplMain.runLater(main::eventStart);
   }
-
+  public void selectErr() {
+    ((TabPane)ReplMain.gui.errors.getParent().getParent())
+      .getSelectionModel().select(1);
+    }
+  public void selectOut() {
+    ((TabPane)ReplMain.gui.output.getParent().getParent())
+      .getSelectionModel().select(0);
+    }
+  public void selectPass() {
+    ((TabPane)ReplMain.gui.output.getParent().getParent())
+      .getSelectionModel().select(3);
+    }
+  public void selectFail() {
+    ((TabPane)ReplMain.gui.output.getParent().getParent())
+      .getSelectionModel().select(4);
+    }
   public void origStop() throws Exception {
     this.stage.close();
     super.stop();

@@ -7,7 +7,7 @@ import javafx.scene.text.TextFlow;
 import javafx.scene.control.ScrollPane;
 
 public class DisplayTests {
-  boolean isPass(String s){
+  public static boolean isPass(String s){
     String start="###################\n#Pass";
     return s.startsWith(start);
     }

@@ -24,6 +24,8 @@ import is.L42.generated.S;
 import is.L42.generated.Full.E;
 import is.L42.generated.Full.Par;
 import is.L42.main.Main;
+import is.L42.platformSpecific.javaTranslation.L42Error;
+import is.L42.platformSpecific.javaTranslation.L42Exception;
 import is.L42.platformSpecific.javaTranslation.Resources;
 import is.L42.repl.CachedInference.FileInference;
 import is.L42.tools.General;
@@ -70,7 +72,7 @@ public class RunningData {
   public static void parallelStart42(Path top) {
     try{Main.run(top,cache);}
     catch (IOException e){ throw new Error(e); }
-    catch (EndError e){}//correctly ignoring it since it is already printed on 'err'
+    catch (EndError|L42Error| L42Exception e){}//correctly ignoring it since it is already printed on 'err'
     finally{
       cache=cache.toNextCache();
       Resources.clearResKeepReuse();
