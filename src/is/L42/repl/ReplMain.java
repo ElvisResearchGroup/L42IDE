@@ -105,7 +105,6 @@ public class ReplMain {
     catch(IOException e){throw new Error(e);}
     }
   static final String defaultIntro="""
-      reuse [L42.is/AdamsTowel]
       /*
         *** Welcome to the 42 IDE ***
         - Start pressing the 'Run!' button.
