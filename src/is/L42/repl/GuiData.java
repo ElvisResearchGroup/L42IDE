@@ -76,9 +76,15 @@ public class GuiData {
     }
   public static void terminate42(){
     if(s!=null){ s.terminate(); }
-    if(ping!=null){ ping.cancel(false); ping=null; }
+    if(ping!=null){
+      ping.cancel(false);
+      ping=null;
+      ReplMain.gui.errors.appendText("Execution terminated");
+      ReplMain.gui.selectErr();
+      }
     s=null;
     ReplMain.gui.enableRunB();
+    
     }
   public static void start42(Path top){
     assert ping==null;

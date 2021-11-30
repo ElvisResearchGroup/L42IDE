@@ -54,6 +54,9 @@ class AbsPath{ //absolutePath
     }
   public File toFile() {return this.inner.toFile();}
   }
+
+@SuppressWarnings("serial")
+class DialogError extends Exception{}
 public class ReplMain {
   static ReplGui gui;//TODO: may be swap them so it is a singleton pattern?
   static AbsPath l42Root=new AbsPath(Path.of(".").toAbsolutePath());
@@ -101,10 +104,20 @@ public class ReplMain {
       }
     catch(IOException e){throw new Error(e);}
     }
+  static final String defaultIntro="""
+      reuse [L42.is/AdamsTowel]
+      /*
+        *** Welcome to the 42 IDE ***
+        - Start pressing the 'Run!' button.
+        - 'Overview' will show everything compiled by the last run.
+        - the hints tab will show available method names for class
+          and binding names available in the last run. 
+      */
+      """;
   void loadProject(Path path) {
     Path thisFile=path.resolve("This.L42");
     List<Path> filesToOpen=Files.exists(thisFile)?
-        openProject(path):makeNewProject(path,Main.defaultMain,thisFile);
+        openProject(path):makeNewProject(path,Main.defaultMain+defaultIntro,thisFile);
     l42Root=new AbsPath(path);
     gui.rootPathSet=true;
     for(Path file:filesToOpen){openFileInNewTab(file);}
@@ -119,25 +132,29 @@ public class ReplMain {
     this.cache=CachedTop.loadCache(l42Root.inner);
     }*/
   void openFile(Path file) {
-    if(Files.exists(file) && l42Root.isChild(file)){openFileInNewTab(file);}
-    else{displayError("File not in Project","The selected file is not in the current project");}
+    if(Files.exists(file) && l42Root.isChild(file)){openFileInNewTab(file);return;}
+    try{displayError("File not in Project","The selected file is not in the current project");} 
+    catch(DialogError e){}
     }
-  void displayError(String title,String msg){Platform.runLater(()->gui.makeAlert(title,msg));}
+  void displayError(String title,String msg) throws DialogError{
+    Platform.runLater(()->gui.makeAlert(title,msg));
+    throw new DialogError();
+    }
   void openFileInNewTab(Path file) {
     assert file!=null && Files.exists(file);
-    String content; try {content = new String(Files.readAllBytes(file));}
-    catch (IOException e) {
-      displayError("Invalid Project content","Lost contact with project folder");
-      return;
+    try{
+      String content; try {content = new String(Files.readAllBytes(file));}
+      catch (IOException e){displayError("Invalid Project content","Lost contact with project folder");return;}
+      String openFileName = l42Root.relativize(file).toString();
+      makeReplTextArea(openFileName,content);
       }
-    String openFileName = l42Root.relativize(file).toString();
-    makeReplTextArea(openFileName,content);
+    catch(DialogError eTab){}
     }
   String overviewText=null;
   void loadOverview(){
     var newOverviewText=GuiData.overviewString();
-    if(overviewText==null){ overviewText=newOverviewText; }
-    if(newOverviewText!=null){ overviewText=newOverviewText; }
+    if(overviewText==null){ overviewText="\n"+newOverviewText; }
+    if(newOverviewText!=null){ overviewText="\n"+newOverviewText; }
     }
   void openOverview(){
     loadOverview();
@@ -204,8 +221,15 @@ public class ReplMain {
     assert current.indexOf(".")==-1;
     return true;
     }
-  Path processIntermediate(Path res,String current,String next){
-    if(!checkValidC(current)) {displayError("Invalid File name","Invalid File name: "+current);}
+  String fileNameError(String current){
+    if(current.isEmpty()){ return "Don't start your file name with a '/'";};
+    if(current.charAt(0) != current.toUpperCase().charAt(0)){ 
+      return "Invalid File name \n Make sure the first character is Uppercase";
+      }
+    return "Invalid File name: "+current + "\nFile names should be valid 42 class names.";
+    }
+  Path processIntermediate(Path res,String current,String next)throws DialogError{
+    if(!checkValidC(current)) {displayError("Invalid File name",fileNameError(current));}
     res=res.resolve(current);
     try {
       if(Files.exists(res)){return res;}
@@ -219,8 +243,8 @@ public class ReplMain {
       }
     catch (IOException e) {throw new Error(e);}          
     }
-  Path processLast(Path res,String current){
-    if(!current.equals("This") && !checkValidC(current)) {displayError("Invalid File name","Invalid File name: "+current);}
+  Path processLast(Path res,String current) throws DialogError{
+    if(!current.equals("This") && !checkValidC(current)) {displayError("Invalid File name",fileNameError(current));}
     current+=".L42";
     res=res.resolve(current);
     try {
@@ -239,12 +263,15 @@ public class ReplMain {
     if(ns.isEmpty()) {return;}
     var res=ReplMain.l42Root.inner;
     int count=0;
-    while(count<ns.size()){
-      boolean isLast=count+1==ns.size();
-      var current=ns.get(count).trim();
-      if(!isLast) {res=processIntermediate(res,current, ns.get(count+1).trim());}
-      else {res=processLast(res,current);}
-      count+=1;
+    try {
+      while(count<ns.size()){
+        boolean isLast=count+1==ns.size();
+        var current=ns.get(count).trim();
+        if(!isLast) {res=processIntermediate(res,current, ns.get(count+1).trim());}
+        else {res=processLast(res,current);}
+        count+=1;
+        }
       }
+    catch(DialogError e){}
     }
   }
