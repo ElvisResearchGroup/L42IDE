@@ -31,6 +31,8 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import is.L42.common.ToNameUrl;
+
 
 public class ReplGui extends Application {
   static ReplMain main;
@@ -60,6 +62,7 @@ public class ReplGui extends Application {
   Button openOverviewBtn;
   Button clearCacheBtn;
   Button newFileBtn;
+  Button aboutBtn;
   Stage stage;
   Tab selectedTab=null;
   @SuppressWarnings("unchecked")
@@ -161,6 +164,11 @@ public class ReplGui extends Application {
     //clearCacheBtn.setOnAction(t->ReplMain.runLater(main::clearCache));
     clearCacheBtn.setOnAction(t->GuiData.terminate42());
     }
+  private void mkAboutBtn(Stage primaryStage){
+aboutBtn=new Button("About");
+aboutBtn.setOnAction(t->makeDialog("About",aboutText()));
+}
+ 
   @Override
   public void start(Stage primaryStage) throws Exception {
     assert Platform.isFxApplicationThread();
@@ -176,10 +184,11 @@ public class ReplGui extends Application {
     mkOpenOverviewBtn(primaryStage);
     mkClearCacheBtn(primaryStage);
     mkNewFileBtn(primaryStage);
+    mkAboutBtn(primaryStage);
     Pane empty=new Pane();
     HBox.setHgrow(empty, Priority.ALWAYS);
     ToolBar toolbar = new ToolBar(
-      loadProjectBtn, openFileBtn, refreshB,openOverviewBtn,newFileBtn, empty,clearCacheBtn, runB);
+      loadProjectBtn, openFileBtn, refreshB,openOverviewBtn,newFileBtn, empty, aboutBtn,clearCacheBtn, runB);
     borderPane.setTop(toolbar);
     //System.setOut(delegatePrintStream(out,System.out));
     //System.setErr(delegatePrintStream(err,System.err));
@@ -201,8 +210,8 @@ public class ReplGui extends Application {
     Scene scene = new Scene(borderPane, SCENE_WIDTH, SCENE_HEIGHT);
     primaryStage.setTitle("L42 IDE");
     primaryStage.setScene(scene);
-    primaryStage.setMinWidth(scene.getWidth());
-    primaryStage.setMinHeight(scene.getHeight());
+    primaryStage.setMinWidth(scene.getWidth()/3);
+    primaryStage.setMinHeight(scene.getHeight()/3);
     primaryStage.show();
     ReplMain.runLater(main::eventStart);
   }
@@ -294,6 +303,20 @@ public class ReplGui extends Application {
     alert.setContentText(content);
     alert.showAndWait();
   }
+ 
+  void makeDialog(String title, String content) {
+	assert Platform.isFxApplicationThread();
+	Alert alert = new Alert(AlertType.INFORMATION);
+	alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+	alert.setTitle(title);
+	alert.setHeaderText(null);
+	alert.setContentText(content);
+	alert.showAndWait();
+  }
+ 
+  //Probably want to expand this later on
+  private String aboutText() { return "L42 version : " + ToNameUrl.l42IsRepoVersion; }
+ 
   /*
   public static PrintStream delegatePrintStream(StringBuffer err,PrintStream prs){
     return new PrintStream(prs){
