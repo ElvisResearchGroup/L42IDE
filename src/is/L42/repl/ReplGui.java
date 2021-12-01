@@ -201,8 +201,8 @@ public class ReplGui extends Application {
     Scene scene = new Scene(borderPane, SCENE_WIDTH, SCENE_HEIGHT);
     primaryStage.setTitle("L42 IDE");
     primaryStage.setScene(scene);
-    primaryStage.setMinWidth(scene.getWidth());
-    primaryStage.setMinHeight(scene.getHeight());
+    primaryStage.setMinWidth(scene.getWidth()/3);
+    primaryStage.setMinHeight(scene.getHeight()/3);
     primaryStage.show();
     ReplMain.runLater(main::eventStart);
   }
