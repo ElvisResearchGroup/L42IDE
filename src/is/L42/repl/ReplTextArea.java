@@ -41,13 +41,22 @@ public class ReplTextArea extends SplitPane {
       });
     htmlFx.webEngine.executeScript("ace.edit(\"textArea\").setValue(\""+b+"\", -1)");
     }
-  void saveToFile() {
+  boolean saveToFileAndRemoveStar() {
+    try{saveToFile();}
+    catch (IOException e){
+      e.printStackTrace();
+      addSaveError();
+      return false;
+      }
+    removeStar();
+    return true;
+    }
+  void saveToFile() throws IOException{
     assert Platform.isFxApplicationThread();
     String content=getText();
     Path file=ReplMain.l42Root.resolve(this.filename);
     assert file!=null && Files.exists(file) : file;
-    try { Files.write(file, content.getBytes()); }
-    catch (IOException e) {throw new Error(e);}
+    Files.write(file, content.getBytes());
     }
   void refresh() {
     assert Platform.isFxApplicationThread();
@@ -63,5 +72,8 @@ public class ReplTextArea extends SplitPane {
     }
   void removeStar() {
     if(tab.getText().endsWith("*")) {tab.setText(filename);}
+    }
+  void addSaveError() {
+    tab.setText(filename+"--SaveFailed");
     }
   }

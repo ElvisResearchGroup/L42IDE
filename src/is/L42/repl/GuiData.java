@@ -78,6 +78,7 @@ public class GuiData {
   private static String limitLines(String a,String pre){
     int i=pre.lastIndexOf("\n");
     if(i==-1) {i=pre.length();}
+    else { i=pre.length()-i; }
     StringBuilder b=new StringBuilder();
     int fl=0;
     for(int nl=nextNl(a,fl);fl!=a.length();fl=nl,nl=nextNl(a,nl)){
@@ -86,7 +87,8 @@ public class GuiData {
       if(fl==0){ size+=i; }
       if(size<maxLine){ b.append(currLine); continue;}
       b.append("**Line size limit reached, tail of line removed**<|");
-      b.append(currLine,0,maxLine);
+      if(fl==0){ b.append(currLine,0,maxLine-i); }
+      else{ b.append(currLine,0,maxLine); }
       }
     return b.toString();
     }

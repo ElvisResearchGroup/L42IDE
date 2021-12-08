@@ -138,8 +138,7 @@ public class ReplGui extends Application {
       if(t.getText().equals("OVERVIEW*")){continue;}
       if(t.getText().endsWith("*")){
         ReplTextArea editor = (ReplTextArea)t.getContent();
-        editor.saveToFile();
-        editor.removeStar();
+        editor.saveToFileAndRemoveStar();
         }
       }
     }
@@ -245,7 +244,7 @@ public class ReplGui extends Application {
     }
   private void tabOnClose(ReplTextArea editor,Event t) {
     if(!editor.tab.getText().endsWith("*")) {return;}
-    if(!editor.tab.getText().equals("Overview")) {return;}
+    if(editor.tab.getText().equals("Overview")) {return;}
     Alert alert = new Alert(AlertType.CONFIRMATION);
     alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
     alert.getButtonTypes().setAll(ButtonType.NO,ButtonType.CANCEL,ButtonType.YES);
@@ -253,7 +252,11 @@ public class ReplGui extends Application {
     alert.setHeaderText(null);
     alert.setContentText("Do you want to save \""+editor.filename+"\" before closing?");
     alert.showAndWait().ifPresent(response->{
-      if(response == ButtonType.YES) {editor.saveToFile();return;}
+      if(response == ButtonType.YES) {
+        boolean success=editor.saveToFileAndRemoveStar();
+        if(!success && t!=null) {t.consume();}
+        return;
+        }
       if(response == ButtonType.NO) {return;}
       if(response == ButtonType.CANCEL && t!=null){t.consume();}
       });    
