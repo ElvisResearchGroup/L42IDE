@@ -23,7 +23,7 @@ public class GuiData {
     return new ProcessSlave(-1,new String[]{},ClassLoader.getPlatformClassLoader()){
       @Override protected List<String> getJavaArgs(String libLocation){
         var res=super.getJavaArgs(libLocation);
-        res.add(0,"-ea");
+        //res.add(0,"-ea");
         res.add(0,"--enable-preview");
         return res;
         }
@@ -42,12 +42,22 @@ public class GuiData {
       ReplGui.main.loadOverview();
       }
     Platform.runLater(()->{
-      var tooMuchOut=pingedData.out().length()+ReplMain.gui.output.getText().length()>max;
-      var tooMuchErr=pingedData.err().length()+ReplMain.gui.errors.getText().length()>max;
-      if(tooMuchOut){ReplMain.gui.output.clear();}
-      if(tooMuchErr){ReplMain.gui.errors.clear();}
-      ReplMain.gui.output.appendText(pingedData.out());
-      ReplMain.gui.errors.appendText(pingedData.err());
+      String out=limitLines(pingedData.out(),ReplMain.gui.output.getText());
+      String err=limitLines(pingedData.err(),ReplMain.gui.errors.getText());
+      var tooMuchOut=out.length()+ReplMain.gui.output.getText().length()>max;
+      var tooMuchErr=err.length()+ReplMain.gui.errors.getText().length()>max;
+      if(tooMuchOut){
+        ReplMain.gui.output.clear();
+        ReplMain.gui.output.appendText(
+          cutted(ReplMain.gui.output.getText(),out));
+        }
+      else { ReplMain.gui.output.appendText(out); }
+      if(tooMuchErr){
+        ReplMain.gui.errors.clear();
+        ReplMain.gui.errors.appendText(
+            cutted(ReplMain.gui.errors.getText(),err));
+        }
+      else { ReplMain.gui.errors.appendText(err); }
       ReplMain.gui.tests.handle(pingedData.tests());
       var someErr=!pingedData.err().isEmpty();
       var someOut=!pingedData.out().isEmpty();
@@ -60,7 +70,42 @@ public class GuiData {
       if(ReplMain.gui.tests.failed==0){ ReplMain.gui.selectPass(); }
       });
     }
+  private static int nextNl(String s,int c) { 
+    int i=s.indexOf("\n",c);
+    if(i==-1){ return s.length(); }
+    return i+1;
+    }
+  private static String limitLines(String a,String pre){
+    int i=pre.lastIndexOf("\n");
+    if(i==-1) {i=pre.length();}
+    StringBuilder b=new StringBuilder();
+    int fl=0;
+    for(int nl=nextNl(a,fl);fl!=a.length();fl=nl,nl=nextNl(a,nl)){
+      String currLine=a.substring(fl,nl); //...\n or ...EOS
+      int size=currLine.length();
+      if(fl==0){ size+=i; }
+      if(size<maxLine){ b.append(currLine); continue;}
+      b.append("**Line size limit reached, tail of line removed**<|");
+      b.append(currLine,0,maxLine);
+      }
+    return b.toString();
+    }
+  private static String cutted(String a,String b){
+    StringBuilder sb = new StringBuilder();
+    sb.append("  **Text size limit reached. Some former text has been removed**\n------------------\n");
+    int al = a.length(); 
+    int bl = a.length();
+    int howMuchOver = al+bl - max/2;
+    if (al < howMuchOver) { sb.append(b,0,howMuchOver-al);}
+    else {
+      sb.append(a,0,howMuchOver);
+      sb.append(b);
+    }
+    return sb.toString();
+  }
   private static int max=200_000;
+  private static int maxLine=40_000;
+  public static int maxTest=20_000;
   public static void clear(){
     Platform.runLater(()->{
       ReplMain.gui.output.clear();
