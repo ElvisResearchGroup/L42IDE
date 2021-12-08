@@ -30,7 +30,6 @@ import javafx.scene.layout.Region;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-
 import is.L42.common.ToNameUrl;
 
 
@@ -165,10 +164,9 @@ public class ReplGui extends Application {
     clearCacheBtn.setOnAction(t->GuiData.terminate42());
     }
   private void mkAboutBtn(Stage primaryStage){
-aboutBtn=new Button("About");
-aboutBtn.setOnAction(t->makeDialog("About",aboutText()));
-}
- 
+	    aboutBtn=new Button("About");
+	    aboutBtn.setOnAction(t->makeDialog("Yes", aboutText()));
+	    }
   @Override
   public void start(Stage primaryStage) throws Exception {
     assert Platform.isFxApplicationThread();
@@ -188,7 +186,7 @@ aboutBtn.setOnAction(t->makeDialog("About",aboutText()));
     Pane empty=new Pane();
     HBox.setHgrow(empty, Priority.ALWAYS);
     ToolBar toolbar = new ToolBar(
-      loadProjectBtn, openFileBtn, refreshB,openOverviewBtn,newFileBtn, empty, aboutBtn,clearCacheBtn, runB);
+      loadProjectBtn,openFileBtn,refreshB,openOverviewBtn,newFileBtn,empty,aboutBtn,clearCacheBtn,runB);
     borderPane.setTop(toolbar);
     //System.setOut(delegatePrintStream(out,System.out));
     //System.setErr(delegatePrintStream(err,System.err));
@@ -303,20 +301,16 @@ aboutBtn.setOnAction(t->makeDialog("About",aboutText()));
     alert.setContentText(content);
     alert.showAndWait();
   }
- 
   void makeDialog(String title, String content) {
-	assert Platform.isFxApplicationThread();
-	Alert alert = new Alert(AlertType.INFORMATION);
-	alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-	alert.setTitle(title);
-	alert.setHeaderText(null);
-	alert.setContentText(content);
-	alert.showAndWait();
+    assert Platform.isFxApplicationThread();
+    Alert alert = new Alert(AlertType.INFORMATION);
+    alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+    alert.setTitle(title);
+    alert.setHeaderText(null);
+    alert.setContentText(content);
+    alert.showAndWait();
   }
- 
-  //Probably want to expand this later on
   private String aboutText() { return "L42 version : " + ToNameUrl.l42IsRepoVersion; }
- 
   /*
   public static PrintStream delegatePrintStream(StringBuffer err,PrintStream prs){
     return new PrintStream(prs){
