@@ -64,7 +64,7 @@ public class DisplayTests {
     
     Text newS = new Text();
     newS.setStyle("-fx-fill: BLACK;-fx-font-weight:normal;");
-    newS.setText(cropFirstLine(s));
+    newS.setText(limitTestSize(cropFirstLine(s)));
     if(pass) {_passedTests.getChildren().addAll(passSplit(),newS);}
     else {_failedTests.getChildren().addAll(failSplit(),newS);}
     }
@@ -72,5 +72,12 @@ public class DisplayTests {
     int i=txt.indexOf("\n");
     if(i==-1) {return txt;}
     return txt.substring(i+1);
+    }
+  String limitTestSize(String txt) {
+    if(txt.length() < GuiData.maxTest ) { return txt; }
+    StringBuilder sb = new StringBuilder();
+    sb.append("**Test size limit exceeded. Tail of test was removed**<|");
+    sb.append(txt,0,GuiData.maxTest);
+    return sb.toString();
     }
   }
