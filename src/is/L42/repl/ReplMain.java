@@ -63,10 +63,12 @@ public class ReplMain {
   static ExecutorService executor = Executors.newFixedThreadPool(1);
   
   public static void main(String []arg) throws IOException {
-    if (arg.length!=0) {Main.main(arg);return;}
     URL url = ReplMain.class.getResource("textArea.xhtml");
-    if(url.toString().startsWith("jar:")){Constants.localhost=Paths.get("localhost");}
-    else{Constants.localhost=Paths.get("..","L42","localhost");}
+    if(!url.toString().startsWith("jar:")){
+      Constants.localhost=Paths.get("..","L42","localhost");
+      Main.l42IsRepoVersion=Main.testingRepoVersion;
+      }
+    if (arg.length!=0) {Main.main(arg);return;}
     ReplGui.main=new ReplMain();
     Application.launch(ReplGui.class,arg);
     }
