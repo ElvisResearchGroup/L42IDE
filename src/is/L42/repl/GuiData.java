@@ -29,10 +29,12 @@ public class GuiData {
         return res;
         }
       };
-    s.run(()->{
-      Constants.localhost=Paths.get("..","L42","localhost");
-      Main.l42IsRepoVersion=Main.testingRepoVersion;
-      });
+    if(Main.testingRepoVersion==Main.l42IsRepoVersion){
+      s.run(()->{
+        Constants.localhost=Paths.get("..","L42","localhost");
+        Main.l42IsRepoVersion=Main.testingRepoVersion;
+        });
+      }
     return s;
     }
   private static ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
