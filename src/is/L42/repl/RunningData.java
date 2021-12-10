@@ -23,6 +23,7 @@ import is.L42.generated.LDom;
 import is.L42.generated.S;
 import is.L42.generated.Full.E;
 import is.L42.generated.Full.Par;
+import is.L42.introspection.OverviewVisitor;
 import is.L42.main.Main;
 import is.L42.platformSpecific.javaTranslation.L42Error;
 import is.L42.platformSpecific.javaTranslation.L42Exception;
@@ -175,9 +176,6 @@ public class RunningData {
   static String overviewString(){
     var top=cache.lastTopL();
     if(top.isEmpty()){ return null; }
-    var v=new OverviewVisitor();
-    top.get().accept(v);
-    String res=v.result().substring(2,v.result().length()-4);
-    return res.lines().map(l->l.substring(2)).collect(Collectors.joining("\n"));
+    return OverviewVisitor.makeOverview(top.get());
     }
   }
