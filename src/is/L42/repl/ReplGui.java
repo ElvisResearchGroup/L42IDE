@@ -321,42 +321,36 @@ public class ReplGui extends Application {
     alert.showAndWait();
   }
   private FlowPane aboutText(String nextVersion) {
-	  FlowPane fp = new FlowPane();
-	  String content = "L42 Version : " + Main.l42IsRepoVersion + "\n";
-	  Hyperlink hl = new Hyperlink();
-	  if(nextVersion != "") {
-		  content += "Next Version : " + nextVersion;
-		  hl.setText("\nhere");
-		  hl.setOnAction((a)->getHostServices().showDocument("Https://l42.is/tutorial.xhtml#Download"));
-	  } else { content += "Up to date!";}
-	  Label l = new Label(content);
-	  fp.getChildren().addAll(l,hl);
-	  return fp;
-	  }
+	FlowPane fp = new FlowPane();
+	String content = "L42 Version : " + Main.l42IsRepoVersion + "\n";
+	Hyperlink hl = new Hyperlink();
+	if(nextVersion != "") {
+	  content += "Next Version : " + nextVersion;
+	  hl.setText("\nhere");
+	  hl.setOnAction((a)->getHostServices().showDocument("Https://l42.is/tutorial.xhtml#Download"));
+	} else { content += "Up to date!";}
+	Label l = new Label(content);
+	fp.getChildren().addAll(l,hl);
+	return fp;
+  }
   private String newVersion(String s) {
-	  if(s == "testing") { return "";}
-	  String versionCode;
-	  String prefix = s.substring(0,1);
-	  int versionNum = Integer.parseInt(s.substring(1) + 1);
-	  if(versionNum >= 1000) { versionCode = prefix + versionNum;}
-	  else { versionCode = prefix + "0" + versionNum;}
-	  if (newUpdate(versionCode)) { return versionCode + " - available";}
-	  return "";
+    if(s == "testing") { return "";}
+    String versionCode;
+    String prefix = s.substring(0,1);
+	int versionNum = Integer.parseInt(s.substring(1) + 1);
+	if(versionNum >= 1000) { versionCode = prefix + versionNum;}
+	else { versionCode = prefix + "0" + versionNum;}
+	if (newUpdate(versionCode)) { return versionCode + " - available";}
+	return "";
   }
   private boolean newUpdate(String nextVersion) {
-	  try {
-		  URL nextUrl = new URL("https://github.com/Language42/is/blob/main/" + nextVersion);
-		  HttpURLConnection huc = (HttpURLConnection) nextUrl.openConnection();
-		  if(huc.getResponseCode() == 404) { return false;}
-	  } catch(MalformedURLException e) {
-		  e.printStackTrace();
-		  return false; 
-		  }
-	    catch( IOException e) {
-	    	e.printStackTrace();
-	    	return false; 
-	    	}
-	  return true;
+	try {
+	  URL nextUrl = new URL("https://github.com/Language42/is/blob/main/" + nextVersion);
+	  HttpURLConnection huc = (HttpURLConnection) nextUrl.openConnection();
+	  if(huc.getResponseCode() == 404) { return false;}
+	} catch(MalformedURLException e) { return false; }
+	  catch( IOException e) { return false; }
+	return true;
   }
   /*
   public static PrintStream delegatePrintStream(StringBuffer err,PrintStream prs){
