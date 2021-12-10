@@ -6,8 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 import is.L42.common.Constants;
+import is.L42.introspection.OverviewVisitor;
 import is.L42.platformSpecific.javaTranslation.Resources;
-import is.L42.repl.OverviewVisitor;
 import is.L42.top.CachedTop;
 import is.L42.top.Init;
 
