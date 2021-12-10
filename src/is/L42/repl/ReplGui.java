@@ -1,6 +1,10 @@
 package is.L42.repl;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Function;
@@ -15,6 +19,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -23,6 +29,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
@@ -30,6 +37,7 @@ import javafx.scene.layout.Region;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import is.L42.main.Main;
 
 
 public class ReplGui extends Application {
@@ -60,6 +68,7 @@ public class ReplGui extends Application {
   Button openOverviewBtn;
   Button clearCacheBtn;
   Button newFileBtn;
+  Button aboutBtn;
   Stage stage;
   Tab selectedTab=null;
   @SuppressWarnings("unchecked")
@@ -160,6 +169,11 @@ public class ReplGui extends Application {
     //clearCacheBtn.setOnAction(t->ReplMain.runLater(main::clearCache));
     clearCacheBtn.setOnAction(t->GuiData.terminate42());
     }
+  private void mkAboutBtn(Stage primaryStage){
+  aboutBtn=new Button("About");
+  FlowPane fp = aboutText(newVersion());
+  aboutBtn.setOnAction(t->makeDialog("About", fp));
+  }
   @Override
   public void start(Stage primaryStage) throws Exception {
     assert Platform.isFxApplicationThread();
@@ -175,10 +189,11 @@ public class ReplGui extends Application {
     mkOpenOverviewBtn(primaryStage);
     mkClearCacheBtn(primaryStage);
     mkNewFileBtn(primaryStage);
+    mkAboutBtn(primaryStage);
     Pane empty=new Pane();
     HBox.setHgrow(empty, Priority.ALWAYS);
     ToolBar toolbar = new ToolBar(
-      loadProjectBtn, openFileBtn, refreshB,openOverviewBtn,newFileBtn, empty,clearCacheBtn, runB);
+      loadProjectBtn,openFileBtn,refreshB,openOverviewBtn,newFileBtn,aboutBtn,empty,clearCacheBtn,runB);
     borderPane.setTop(toolbar);
     //System.setOut(delegatePrintStream(out,System.out));
     //System.setErr(delegatePrintStream(err,System.err));
@@ -296,6 +311,48 @@ public class ReplGui extends Application {
     alert.setHeaderText(null);
     alert.setContentText(content);
     alert.showAndWait();
+  }
+  void makeDialog(String title, FlowPane content) {
+    assert Platform.isFxApplicationThread();
+    Alert alert = new Alert(AlertType.INFORMATION);
+    alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+    alert.setTitle(title);
+    alert.setHeaderText(null);
+    alert.getDialogPane().setContent(content);
+    alert.showAndWait();
+  }
+  private FlowPane aboutText(String nextVersion) {
+    FlowPane fp = new FlowPane();
+    String content = "L42 Version : " + Main.l42IsRepoVersion + "\n";
+    Hyperlink hl = new Hyperlink();
+    content +=  nextVersion;
+    if(nextVersion == "Update available ") {
+      hl.setText("\nhere");
+      hl.setOnAction((a)->getHostServices().showDocument("Https://l42.is/tutorial.xhtml#Download"));}
+    Label l = new Label(content);
+    fp.getChildren().addAll(l,hl);
+    return fp;
+    }
+  private String newVersion() {
+    if(Main.l42IsRepoVersion == "testing") { return "";}
+    String versionCode;
+    String prefix = Main.l42IsRepoVersion.substring(0,1);
+    int versionNum = Integer.parseInt(Main.l42IsRepoVersion.substring(1)) + 1;
+    if(versionNum >= 100) { versionCode = prefix + versionNum;}
+    else { versionCode = prefix + "0" + versionNum;}
+    if (newUpdate(versionCode)) { return "Update available ";}
+  return "Up to date!";
+  }
+  private boolean newUpdate(String nextVersion) {
+    HttpURLConnection huc = null;
+    try {
+      URL nextUrl = new URL("https://github.com/Language42/is/blob/main/" + nextVersion);
+      huc = (HttpURLConnection) nextUrl.openConnection();
+      if(huc.getResponseCode() == 404) { return false;}
+    } catch(MalformedURLException e) { return false; }
+      catch( IOException e) { return false; }
+    finally { if(huc != null) {huc.disconnect();} }
+    return true;
   }
   /*
   public static PrintStream delegatePrintStream(StringBuffer err,PrintStream prs){
