@@ -6,16 +6,18 @@ allDivs=[
 var doOnLoad=function (){
   hide(allDivs);
   // Get every l42 Div
-  setAllAs("l42Big",{
-      fontSize:"170%",
-      maxLines:30000,
-      mode:"ace/mode/l42",
-      theme:"ace/theme/l42_eclipse",
-      tabSize: 100,
-      useSoftTabs: true,
-      behavioursEnabled: false,
-      wrapBehavioursEnabled: false,
-      });
+  var config={
+    fontSize:"170%",
+    maxLines:30000,
+    mode:"ace/mode/l42",
+    theme:"ace/theme/l42_eclipse",
+    tabSize: 100,
+    useSoftTabs: true,
+    behavioursEnabled: false,
+    wrapBehavioursEnabled: false,
+    }
+  setAllAs("l42Big",config);
+  setAllAs("l42BigFolded",config);
   setOurMinMax();
   window.onresize=function(){setTimeout(setOurMinMax, 100);};
   }
@@ -33,7 +35,7 @@ var setOurMinMax=function(){
   }
 var toFoldAll=false;
 var foldAll=function(){
-  htmlFx.printOut("JS folding mode");
+  //htmlFx.printOut("JS folding mode");
   toFoldAll=true;
   }
 var setAllAs=function(className,options){
@@ -56,7 +58,7 @@ var setAllAs=function(className,options){
       this._signal("copy", text);
       return text;
       };
-    if(toFoldAll){
+    if(toFoldAll || className=="BigFolded"){
       l42Box.getSession().foldAll();
       l42Box.getSession().unfold(1,false);
       }
