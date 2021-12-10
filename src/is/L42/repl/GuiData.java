@@ -2,6 +2,7 @@ package is.L42.repl;
 
 import java.net.URI;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.concurrent.CompletionException;
@@ -11,16 +12,16 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import is.L42.common.Constants;
+import is.L42.main.Main;
 import javafx.application.Platform;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import safeNativeCode.slave.Slave;
 import safeNativeCode.slave.host.ProcessSlave;
 
 public class GuiData {
   static Slave s=null;
-  static Slave makeSlave(){
-    return new ProcessSlave(-1,new String[]{},ClassLoader.getPlatformClassLoader()){
+  static Slave makeSlave() throws RemoteException, ExecutionException, InterruptedException{
+    Slave s=new ProcessSlave(-1,new String[]{},ClassLoader.getPlatformClassLoader()){
       @Override protected List<String> getJavaArgs(String libLocation){
         var res=super.getJavaArgs(libLocation);
         //res.add(0,"-ea");
@@ -28,6 +29,13 @@ public class GuiData {
         return res;
         }
       };
+    if(Main.testingRepoVersion==Main.l42IsRepoVersion){
+      s.run(()->{
+        Constants.localhost=Paths.get("..","L42","localhost");
+        Main.l42IsRepoVersion=Main.testingRepoVersion;
+        });
+      }
+    return s;
     }
   private static ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
   private static ScheduledFuture<?> ping=null;
@@ -78,6 +86,7 @@ public class GuiData {
   private static String limitLines(String a,String pre){
     int i=pre.lastIndexOf("\n");
     if(i==-1) {i=pre.length();}
+    else { i=pre.length()-i; }
     StringBuilder b=new StringBuilder();
     int fl=0;
     for(int nl=nextNl(a,fl);fl!=a.length();fl=nl,nl=nextNl(a,nl)){
@@ -86,7 +95,8 @@ public class GuiData {
       if(fl==0){ size+=i; }
       if(size<maxLine){ b.append(currLine); continue;}
       b.append("**Line size limit reached, tail of line removed**<|");
-      b.append(currLine,0,maxLine);
+      if(fl==0){ b.append(currLine,0,maxLine-i); }
+      else{ b.append(currLine,0,maxLine); }
       }
     return b.toString();
     }

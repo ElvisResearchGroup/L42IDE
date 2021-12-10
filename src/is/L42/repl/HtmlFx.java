@@ -90,8 +90,7 @@ public class HtmlFx extends StackPane{
     ReplTextArea editor=((ReplTextArea)outerPanel);
     //---CTRL+S save
     if (keyEvent.isControlDown() && c == KeyCode.S){
-      editor.saveToFile();
-      editor.removeStar();
+      editor.saveToFileAndRemoveStar();
       return;
       }
     if(!c.isArrowKey() && !c.isMediaKey() && !c.isModifierKey()){
