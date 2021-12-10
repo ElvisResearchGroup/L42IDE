@@ -170,9 +170,10 @@ public class ReplGui extends Application {
     clearCacheBtn.setOnAction(t->GuiData.terminate42());
     }
   private void mkAboutBtn(Stage primaryStage){
-	    aboutBtn=new Button("About");
-	    aboutBtn.setOnAction(t->makeDialog("About", aboutText(newVersion(Main.l42IsRepoVersion))));
-	    }
+  aboutBtn=new Button("About");
+  FlowPane fp = aboutText(newVersion());
+  aboutBtn.setOnAction(t->makeDialog("About", fp));
+  }
   @Override
   public void start(Stage primaryStage) throws Exception {
     assert Platform.isFxApplicationThread();
@@ -321,36 +322,39 @@ public class ReplGui extends Application {
     alert.showAndWait();
   }
   private FlowPane aboutText(String nextVersion) {
-	FlowPane fp = new FlowPane();
-	String content = "L42 Version : " + Main.l42IsRepoVersion + "\n";
-	Hyperlink hl = new Hyperlink();
-	if(nextVersion != "") {
-	  content += "Next Version : " + nextVersion;
-	  hl.setText("\nhere");
-	  hl.setOnAction((a)->getHostServices().showDocument("Https://l42.is/tutorial.xhtml#Download"));
-	} else { content += "Up to date!";}
-	Label l = new Label(content);
-	fp.getChildren().addAll(l,hl);
-	return fp;
-  }
-  private String newVersion(String s) {
-    if(s == "testing") { return "";}
+    FlowPane fp = new FlowPane();
+    String content = "L42 Version : " + Main.l42IsRepoVersion + "\n";
+    Hyperlink hl = new Hyperlink();
+    if(nextVersion != "") {
+      content +=  nextVersion;
+      hl.setText("\nhere");
+      hl.setOnAction((a)->getHostServices().showDocument("Https://l42.is/tutorial.xhtml#Download"));
+    } else { content += "Up to date!";}
+    Label l = new Label(content);
+    fp.getChildren().addAll(l,hl);
+    return fp;
+    }
+    private String newVersion() {
+    if(Main.l42IsRepoVersion == "testing") { return "";}
     String versionCode;
-    String prefix = s.substring(0,1);
-	int versionNum = Integer.parseInt(s.substring(1) + 1);
-	if(versionNum >= 1000) { versionCode = prefix + versionNum;}
-	else { versionCode = prefix + "0" + versionNum;}
-	if (newUpdate(versionCode)) { return versionCode + " - available";}
-	return "";
+    String prefix = Main.l42IsRepoVersion.substring(0,1);
+    int versionNum = Integer.parseInt(Main.l42IsRepoVersion.substring(1)) + 1;
+    if(versionNum >= 100) { versionCode = prefix + versionNum;}
+    else { versionCode = prefix + "0" + versionNum;}
+    if (newUpdate(versionCode)) { return "Update available ";}
+    return "";
   }
   private boolean newUpdate(String nextVersion) {
-	try {
-	  URL nextUrl = new URL("https://github.com/Language42/is/blob/main/" + nextVersion);
-	  HttpURLConnection huc = (HttpURLConnection) nextUrl.openConnection();
-	  if(huc.getResponseCode() == 404) { return false;}
-	} catch(MalformedURLException e) { return false; }
-	  catch( IOException e) { return false; }
-	return true;
+    HttpURLConnection huc = null;
+    try {
+      URL nextUrl = new URL("https://github.com/Language42/is/blob/main/" + nextVersion);
+      huc = (HttpURLConnection) nextUrl.openConnection();
+      if(huc.getResponseCode() == 404) { return false;}
+      huc.disconnect();
+    } catch(MalformedURLException e) { return false; }
+      catch( IOException e) { return false; }
+    finally { if(huc != null) {huc.disconnect();} }
+    return true;
   }
   /*
   public static PrintStream delegatePrintStream(StringBuffer err,PrintStream prs){
