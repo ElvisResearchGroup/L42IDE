@@ -325,16 +325,15 @@ public class ReplGui extends Application {
     FlowPane fp = new FlowPane();
     String content = "L42 Version : " + Main.l42IsRepoVersion + "\n";
     Hyperlink hl = new Hyperlink();
-    if(nextVersion != "") {
-      content +=  nextVersion;
+    content +=  nextVersion;
+    if(nextVersion == "Update available ") {
       hl.setText("\nhere");
-      hl.setOnAction((a)->getHostServices().showDocument("Https://l42.is/tutorial.xhtml#Download"));
-    } else { content += "Up to date!";}
+      hl.setOnAction((a)->getHostServices().showDocument("Https://l42.is/tutorial.xhtml#Download"));}
     Label l = new Label(content);
     fp.getChildren().addAll(l,hl);
     return fp;
     }
-    private String newVersion() {
+  private String newVersion() {
     if(Main.l42IsRepoVersion == "testing") { return "";}
     String versionCode;
     String prefix = Main.l42IsRepoVersion.substring(0,1);
@@ -342,7 +341,7 @@ public class ReplGui extends Application {
     if(versionNum >= 100) { versionCode = prefix + versionNum;}
     else { versionCode = prefix + "0" + versionNum;}
     if (newUpdate(versionCode)) { return "Update available ";}
-    return "";
+  return "Up to date!";
   }
   private boolean newUpdate(String nextVersion) {
     HttpURLConnection huc = null;
@@ -350,7 +349,6 @@ public class ReplGui extends Application {
       URL nextUrl = new URL("https://github.com/Language42/is/blob/main/" + nextVersion);
       huc = (HttpURLConnection) nextUrl.openConnection();
       if(huc.getResponseCode() == 404) { return false;}
-      huc.disconnect();
     } catch(MalformedURLException e) { return false; }
       catch( IOException e) { return false; }
     finally { if(huc != null) {huc.disconnect();} }
