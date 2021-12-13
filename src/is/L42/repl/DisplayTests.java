@@ -2,14 +2,14 @@ package is.L42.repl;
 
 import java.util.List;
 
-import is.L42.platformSpecific.javaTranslation.L42£TrustedIO;
+import is.L42.platformSpecific.javaTranslation.L42Â£TrustedIO;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.scene.control.ScrollPane;
 
 public class DisplayTests {
   public static boolean isPass(String s){
-    String start=L42£TrustedIO.testsSeparator+"\n#Pass";
+    String start=L42Â£TrustedIO.testsSeparator+"\n#Pass";
     return s.startsWith(start);
     }
   TextFlow _passedTests=new TextFlow();
@@ -20,7 +20,7 @@ public class DisplayTests {
   String red="-fx-fill: RED;-fx-font-weight:bold;";
   String black="-fx-fill: Black;-fx-font-weight:normal;";
   String mono="-fx-font-family: 'monospaced';";
-  String sep=L42£TrustedIO.testsSeparator;
+  String sep=L42Â£TrustedIO.testsSeparator;
   int tests=0;
   int passed=0;
   int failed=0;

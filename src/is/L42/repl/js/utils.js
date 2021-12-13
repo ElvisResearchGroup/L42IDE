@@ -6,7 +6,7 @@ allDivs=[
 var doOnLoad=function (){
   hide(allDivs);
   // Get every l42 Div
-  var config={
+  setAllAs("l42IDE",{
     fontSize:"170%",
     maxLines:30000,
     mode:"ace/mode/l42",
@@ -15,9 +15,33 @@ var doOnLoad=function (){
     useSoftTabs: true,
     behavioursEnabled: false,
     wrapBehavioursEnabled: false,
-    }
+    });
+  setAllAs("l42",{
+    fontSize:"95%",
+    maxLines:3000,
+    mode:"ace/mode/l42",
+    theme:"ace/theme/l42_eclipse"
+    });
+  var config = {
+    fontSize:"115%",
+    maxLines:3000,
+    mode:"ace/mode/l42",
+    theme:"ace/theme/l42_eclipse"
+    };
   setAllAs("l42Big",config);
   setAllAs("l42BigFolded",config);
+  setAllAs("java",{
+    fontSize:"95%",
+    maxLines:3000,
+    mode:"ace/mode/java",
+    theme:"ace/theme/github"
+    });
+  setAllAs("html",{
+    fontSize:"115%",
+    maxLines:3000,
+    mode:"ace/mode/html",
+    theme:"ace/theme/github"
+    });  
   setOurMinMax();
   window.onresize=function(){setTimeout(setOurMinMax, 100);};
   }
@@ -27,17 +51,14 @@ var setOurMinMax=function(){
   var height = Math.max(body.scrollHeight, body.offsetHeight,
     html.clientHeight, html.scrollHeight, html.offsetHeight );
   var lineHeight = height/27-1;
-  setAllAs("l42Big",{
+  setAllAs("l42IDE",{
     maxLines:lineHeight,
     minLines:lineHeight,
     autoScrollEditorIntoView: true
     });
   }
 var toFoldAll=false;
-var foldAll=function(){
-  //htmlFx.printOut("JS folding mode");
-  toFoldAll=true;
-  }
+var foldAll=function(){ toFoldAll=true; }
 var setAllAs=function(className,options){
   var list = document.getElementsByClassName(className);
   for (var i = list.length - 1; i >= 0; i--) {
@@ -53,14 +74,16 @@ var setAllAs=function(className,options){
     l42Box.getCopyText=function(){
       var text = this.getSelectedText();
       //htmlFx.printOut("copy called on "+text);
-      setTimeout(function(){htmlFx.copy(text);}, 100);
+      setTimeout(function(){if(htmlFx){htmlFx.copy(text);}}, 100);
       //it was overriding the clipboard later :-(
       this._signal("copy", text);
       return text;
       };
-    if(toFoldAll || className=="BigFolded"){
-      l42Box.getSession().foldAll();
-      l42Box.getSession().unfold(1,false);
+    if(toFoldAll || className=="l42BigFolded"){
+      setTimeout(function(){
+        l42Box.getSession().foldAll();
+        l42Box.getSession().unfold(1,false);
+        }, 100)
       }
     l42Box.focus();
     }
