@@ -79,16 +79,17 @@ var setAllAs=function(className,options){
       this._signal("copy", text);
       return text;
       };
-    if(toFoldAll || className=="l42BigFolded"){
-      setTimeout(function(){
-        l42Box.getSession().foldAll();
-        l42Box.getSession().unfold(1,false);
-        }, 100)
-      }
+    l42Box.resize(true);
+    if(toFoldAll || className=="l42BigFolded"){ timeoutFoldAll(l42Box); }
     l42Box.focus();
     }
   }
-
+var timeoutFoldAll=function(box){
+  setTimeout(function(){
+    box.getSession().foldAll();
+    box.getSession().unfold(1,false);
+    }, 500)
+  }
 var hide=function(elements) {
   elements = elements.length ? elements : [elements];
   for (var index = 0; index < elements.length; index++) {
