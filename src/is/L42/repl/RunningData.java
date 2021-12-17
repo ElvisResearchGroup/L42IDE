@@ -3,11 +3,15 @@ package is.L42.repl;
 import static is.L42.tools.General.L;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import is.L42.common.Constants;
@@ -61,7 +65,19 @@ public class RunningData {
     }
   synchronized public static PingedData pingedData(){
     boolean done=ended!=null && ended.isDone();
-    if(done && ended.isCompletedExceptionally()){ ended.join(); }
+    if(done && ended.isCompletedExceptionally()){
+      Throwable zeus = ended.handle((a,err)->err).join();
+      zeus.printStackTrace();
+      String outputS="";
+      StringWriter sw = new StringWriter();
+      PrintWriter pw = new PrintWriter(sw);
+      zeus.printStackTrace(pw);
+      String errorS=sw.toString();
+      output.setLength(0);
+      error.setLength(0);
+      tests.clear();
+      return new PingedData(L(),outputS,errorS,done);
+      }
     String outputS=output.toString();
     String errorS=error.toString();
     List<String> testsSs=List.copyOf(tests);
@@ -72,8 +88,15 @@ public class RunningData {
     }
   public static void parallelStart42(Path top) {
     try{Main.run(top,cache);}
-    catch (IOException e){ throw new Error(e); }
+    catch (IOException e){ 
+      System.out.println("Ignored IOE");
+      e.printStackTrace();
+      throw new Error(e); }
     catch (EndError|L42Error| L42Exception e){}//correctly ignoring it since it is already printed on 'err'
+    catch (Throwable e){ 
+      System.out.println("Ignored Zeus");
+      e.printStackTrace();
+      throw new Error(e); }
     finally{
       cache=cache.toNextCache();
       Resources.clearResKeepReuse();
