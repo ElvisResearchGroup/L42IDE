@@ -65,21 +65,17 @@ public class RunningData {
     }
   synchronized public static PingedData pingedData(){
     boolean done=ended!=null && ended.isDone();
+    String extraErr="";
     if(done && ended.isCompletedExceptionally()){
       Throwable zeus = ended.handle((a,err)->err).join();
       zeus.printStackTrace();
-      String outputS="";
       StringWriter sw = new StringWriter();
       PrintWriter pw = new PrintWriter(sw);
       zeus.printStackTrace(pw);
-      String errorS=sw.toString();
-      output.setLength(0);
-      error.setLength(0);
-      tests.clear();
-      return new PingedData(L(),outputS,errorS,done);
+      extraErr = "\n"+sw.toString();
       }
     String outputS=output.toString();
-    String errorS=error.toString();
+    String errorS=error.toString()+extraErr;
     List<String> testsSs=List.copyOf(tests);
     output.setLength(0);
     error.setLength(0);
@@ -89,14 +85,14 @@ public class RunningData {
   public static void parallelStart42(Path top) {
     try{Main.run(top,cache);}
     catch (IOException e){ 
-      System.out.println("Ignored IOE");
       e.printStackTrace();
-      throw new Error(e); }
+      throw new Error(e);
+      }
     catch (EndError|L42Error| L42Exception e){}//correctly ignoring it since it is already printed on 'err'
     catch (Throwable e){ 
-      System.out.println("Ignored Zeus");
       e.printStackTrace();
-      throw new Error(e); }
+      throw new Error(e);
+      }
     finally{
       cache=cache.toNextCache();
       Resources.clearResKeepReuse();

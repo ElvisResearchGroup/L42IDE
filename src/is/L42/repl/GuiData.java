@@ -24,12 +24,12 @@ public class GuiData {
     Slave s=new ProcessSlave(-1,new String[]{},ClassLoader.getPlatformClassLoader()){
       @Override protected List<String> getJavaArgs(String libLocation){
         var res=super.getJavaArgs(libLocation);
-        //res.add(0,"-ea");
+        if(Main.isTesting()){ res.add(0,"-ea"); }
         res.add(0,"--enable-preview");
         return res;
         }
       };
-    if(Main.testingRepoVersion==Main.l42IsRepoVersion){
+    if(Main.isTesting()){
       s.run(()->{
         Constants.localhost=Paths.get("..","L42","localhost");
         Main.l42IsRepoVersion=Main.testingRepoVersion;
