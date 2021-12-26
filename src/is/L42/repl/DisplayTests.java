@@ -9,7 +9,7 @@ import javafx.scene.control.ScrollPane;
 
 public class DisplayTests {
   public static boolean isPass(String s){
-    String start=L42£TrustedIO.testsSeparator+"\n#Pass";
+    String start=L42£TrustedIO.testsSeparator+"#Pass";
     return s.startsWith(start);
     }
   TextFlow _passedTests=new TextFlow();
