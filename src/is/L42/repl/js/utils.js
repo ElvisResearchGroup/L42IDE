@@ -70,6 +70,7 @@ var setAllAs=function(className,options){
     l42Box.setReadOnly(false);  // false to make it editable
     l42Box.setScrollSpeed(0.025);
     var text = ""+l42Box.getValue();
+    if (className!="l42IDE"){ text=text.trim(); }
     l42Box.setValue(text,-1);
     l42Box.getCopyText=function(){
       var text = this.getSelectedText();
