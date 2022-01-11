@@ -195,6 +195,6 @@ public class RunningData {
   static String overviewString(){
     var top=cache.lastTopL();
     if(top.isEmpty()){ return null; }
-    return OverviewVisitor.makeOverview(top.get());
+    return OverviewVisitor.makeOverview(top.get(),true);
     }
   }

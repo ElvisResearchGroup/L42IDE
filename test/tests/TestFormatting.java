@@ -16,7 +16,7 @@ public class TestFormatting {
     Resources.clearResKeepReuse();
     Constants.testWithNoUpdatePopChecks(()->{
       var res=Init.topCache(new CachedTop(L(),L()),source);
-      var v=new OverviewVisitor();
+      var v=new OverviewVisitor(true);
       res.accept(v);
       assertEquals(expected,v.result().toString());
       });
