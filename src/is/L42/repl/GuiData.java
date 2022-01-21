@@ -13,19 +13,30 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import is.L42.common.Constants;
+import is.L42.common.Parse;
 import is.L42.main.Main;
+import is.L42.main.Settings;
 import javafx.application.Platform;
 import safeNativeCode.slave.Slave;
 import safeNativeCode.slave.host.ProcessSlave;
 
 public class GuiData {
+  public static AbsPath l42Root=new AbsPath(Path.of(".").toAbsolutePath());
   static Slave s=null;
-  static Slave makeSlave() throws RemoteException, ExecutionException, InterruptedException{
+  static Settings settings=null;
+  static void updateSettings(){
+    var settingPath=GuiData.l42Root.resolve("Setti.ngs");
+    var currentSettings=Parse.sureSettings(settingPath);
+    if(!currentSettings.equals(GuiData.settings)){ GuiData.terminate42(); }
+    GuiData.settings=currentSettings;
+    }
+  static Slave makeSlave(Settings currentSettings) throws RemoteException, ExecutionException, InterruptedException{
     Slave s=new ProcessSlave(-1,new String[]{},ClassLoader.getPlatformClassLoader()){
       @Override protected List<String> getJavaArgs(String libLocation){
         var res=super.getJavaArgs(libLocation);
         if(Main.isTesting()){ res.add(0,"-ea"); }
         res.add(0,"--enable-preview");
+        currentSettings.options().addOptions(res);
         return res;
         }
       };
@@ -125,9 +136,18 @@ public class GuiData {
     }
   public static void auxStart42(URI top)throws InterruptedException, RemoteException, ExecutionException{
     clear();
-    if(s==null){ s=makeSlave(); }
+    if(s==null){
+      try{s=makeSlave(settings);}
+      catch(Throwable t) {t.printStackTrace();throw t;}  
+    }
     ping = scheduler.scheduleAtFixedRate(()->GuiData.ping42(), 200, 100, TimeUnit.MILLISECONDS);
-    s.run(()->RunningData.start42(Path.of(top)));
+    s.run(()->{
+    try {  RunningData.start42(Path.of(top)); }
+    catch(Throwable t) { 
+      t.printStackTrace();
+      throw t;
+      }
+    });
     }
   public static void terminate42(){
     if(s!=null){ s.terminate(); }

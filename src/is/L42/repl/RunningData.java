@@ -29,6 +29,7 @@ import is.L42.generated.Full.E;
 import is.L42.generated.Full.Par;
 import is.L42.introspection.OverviewVisitor;
 import is.L42.main.Main;
+import is.L42.main.Settings;
 import is.L42.platformSpecific.javaTranslation.L42Error;
 import is.L42.platformSpecific.javaTranslation.L42Exception;
 import is.L42.platformSpecific.javaTranslation.Resources;
@@ -51,12 +52,15 @@ public class RunningData {
   static boolean started=false;
   static CompletableFuture<?> ended;
   static AbsPath l42Root;
-  static void firstStart(Path top){
+  static void firstStart(Path top,Settings currentSettings){
+    System.out.println("firststart"+currentSettings);
+    started=true;
     output=new StringBuilder();
     error=new StringBuilder();
     tests=new ArrayList<String>();
     infer=new CachedInference();
     l42Root=new AbsPath(top.getParent());
+    Resources.setSettings(currentSettings);
     Resources.inferenceHandler(infer);
     Resources.setOutHandler(s->{synchronized(RunningData.class){output.append(s);}});
     Resources.setErrHandler(s->{synchronized(RunningData.class){error.append(s);}});
@@ -99,7 +103,9 @@ public class RunningData {
       }
     }
   public static void start42(Path top) {
-    if(!started){ firstStart(top);}
+    var currentSettings=Parse.sureSettings(top.getParent().resolve("Setti.ngs"));
+    if(!currentSettings.equals(Resources.settings())){started=false;}
+    if(!started){ firstStart(top,currentSettings);}
     ended=CompletableFuture.runAsync(()->parallelStart42(top));
     }
   private static final S aaaHint=S.parse("aaa()");

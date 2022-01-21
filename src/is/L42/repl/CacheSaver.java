@@ -26,7 +26,7 @@ public class CacheSaver {
         ArrayList<CachedTop> others=new ArrayList<>();
         queue.drainTo(others);
         if(!others.isEmpty()){candidate=others.get(others.size()-1);}
-        candidate.saveCache(ReplMain.l42Root.inner);
+        candidate.saveCache(GuiData.l42Root.inner);
         }//near certain to block as soon as the while repeat.
       }
     catch (InterruptedException e){System.out.println("Cache Saver Thread Interrupted");}

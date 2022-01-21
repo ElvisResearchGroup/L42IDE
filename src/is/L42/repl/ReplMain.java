@@ -59,8 +59,7 @@ class AbsPath{ //absolutePath
 class DialogError extends Exception{}
 public class ReplMain {
   static ReplGui gui;//TODO: may be swap them so it is a singleton pattern?
-  static AbsPath l42Root=new AbsPath(Path.of(".").toAbsolutePath());
-  static ExecutorService executor = Executors.newFixedThreadPool(1);
+  static ExecutorService executor = Executors.newSingleThreadExecutor();
   
   public static void main(String []arg) throws IOException {
     URL url = ReplMain.class.getResource("textArea.xhtml");
@@ -88,21 +87,34 @@ public class ReplMain {
       catch(Exception e){throw new Error(e);}
     });
   }
-  List<Path> makeNewProject(Path path, String content, Path thisFile){
+  void ensureSettings(Path path, String content,Path settingsFile) {
+    if(Files.exists(settingsFile)) {return;}
+    try {
+      Files.createDirectories(path.toAbsolutePath().getParent());
+      Files.createFile(settingsFile);//create an empty Setti.ngs file in the selected folder
+      Files.write(settingsFile, content.getBytes());
+      }
+    catch(IOException e) {throw new Error(e);}    
+    }
+  void makeNewProject(Path path, String content, Path thisFile){
+    if(Files.exists(thisFile)) {return;}
     try {
       Files.createDirectories(path.toAbsolutePath().getParent());
       Files.createFile(thisFile);//create an empty This.L42 file in the selected folder
       Files.write(thisFile, content.getBytes());
       }
-    catch(IOException e) {throw new Error(e);}
-    return Collections.singletonList(thisFile); //only This.L42 file	    
+    catch(IOException e) {throw new Error(e);}	    
+    }
+  private static final List<String> extensions=List.of(".L42",".ngs");
+  boolean validExtension(String name){
+    return extensions.stream().anyMatch(e->name.endsWith(e));
     }
   List<Path> openProject(Path path){
     try {
       return Files.walk(path)
         .filter(Files::isRegularFile)
-        .filter(p->p.toFile().getName().endsWith(".L42"))
-        .collect(Collectors.toList());
+        .filter(p->validExtension(p.toFile().getName()))
+        .toList();
       }
     catch(IOException e){throw new Error(e);}
     }
@@ -115,16 +127,33 @@ public class ReplMain {
           and binding names available in the last run. 
       */
       """;
+  static final String defaultSettings="""
+      /*
+        *** 42 settings ***
+        You can change the stack and memory limitations and add security mappings
+      */
+      maxStackSize = 1G
+      initialMemorySize = 256M
+      maxMemorySize = 2G
+      //For example, this would allow MyMain to call #$of() on an FS.Real
+      //coming from L42.is/FileSystem
+      //MyMain = [L42.is/FileSystem]
+      """;
   void loadProject(Path path) {
     Path thisFile=path.resolve("This.L42");
+    Path settingsFile=path.resolve("Setti.ngs");
+    makeNewProject(path,Main.defaultMain+defaultIntro,thisFile);
+    ensureSettings(path,defaultSettings,settingsFile);
     List<Path> filesToOpen=Files.exists(thisFile)?
-        openProject(path):makeNewProject(path,Main.defaultMain+defaultIntro,thisFile);
-    l42Root=new AbsPath(path);
+      openProject(path):
+      List.of(thisFile,settingsFile);
+    GuiData.l42Root=new AbsPath(path);
     gui.rootPathSet=true;
     for(Path file:filesToOpen){openFileInNewTab(file);}
     //cache=CachedTop.loadCache(path);
     Platform.runLater(()->gui.enableRunB());
     }
+  
   /*void clearCache(){
     infer.files.clear();
     try {Files.delete(l42Root.resolve("cache.L42Bytes"));}
@@ -133,7 +162,7 @@ public class ReplMain {
     this.cache=CachedTop.loadCache(l42Root.inner);
     }*/
   void openFile(Path file) {
-    if(Files.exists(file) && l42Root.isChild(file)){openFileInNewTab(file);return;}
+    if(Files.exists(file) && GuiData.l42Root.isChild(file)){openFileInNewTab(file);return;}
     try{displayError("File not in Project","The selected file is not in the current project");} 
     catch(DialogError e){}
     }
@@ -146,7 +175,7 @@ public class ReplMain {
     try{
       String content; try {content = new String(Files.readAllBytes(file));}
       catch (IOException e){displayError("Invalid Project content","Lost contact with project folder");return;}
-      String openFileName = l42Root.relativize(file).toString();
+      String openFileName = GuiData.l42Root.relativize(file).toString();
       makeReplTextArea(openFileName,content);
       }
     catch(DialogError eTab){}
@@ -195,7 +224,7 @@ public class ReplMain {
       gui.errors.setText("");
       gui.output.setText("");
       });
-    Path topPath=l42Root.resolve("This.L42");
+    Path topPath=GuiData.l42Root.resolve("This.L42");
     //CachedTop cache=return new CachedTop(L(),L());//CachedTop.loadCache(path);
     try{GuiData.start42(topPath);}
     catch(CancellationException ce){}
@@ -262,7 +291,7 @@ public class ReplMain {
     if(isFolder){r=r+"This";}
     var ns=List.of(r.split("/"));
     if(ns.isEmpty()) {return;}
-    var res=ReplMain.l42Root.inner;
+    var res=GuiData.l42Root.inner;
     int count=0;
     try {
       while(count<ns.size()){

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Function;
@@ -37,6 +38,7 @@ import javafx.scene.layout.Region;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import is.L42.common.Parse;
 import is.L42.main.Main;
 
 
@@ -110,7 +112,7 @@ public class ReplGui extends Application {
       FileChooser fileChooser = new FileChooser();
       FileChooser.ExtensionFilter l42Filter = new FileChooser.ExtensionFilter("L42 files (*.L42)", "*.L42");
       fileChooser.getExtensionFilters().add(l42Filter);
-      fileChooser.setInitialDirectory(ReplMain.l42Root.toFile());
+      fileChooser.setInitialDirectory(GuiData.l42Root.toFile());
       File chosenFile = fileChooser.showOpenDialog(primaryStage);
       if(chosenFile==null) {return;} //no selection has been made
       ReplMain.runLater(()->main.openFile(chosenFile.toPath()));
@@ -137,6 +139,7 @@ public class ReplGui extends Application {
       tests.reset();
       saveAll();
       assert !running: "was running-buttonRunPressed";
+      GuiData.updateSettings();
       disableRunB();
       ReplMain.runLater(()->main.runCode());
       });

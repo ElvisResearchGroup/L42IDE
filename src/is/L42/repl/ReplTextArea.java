@@ -54,13 +54,13 @@ public class ReplTextArea extends SplitPane {
   void saveToFile() throws IOException{
     assert Platform.isFxApplicationThread();
     String content=getText();
-    Path file=ReplMain.l42Root.resolve(this.filename);
+    Path file=GuiData.l42Root.resolve(this.filename);
     assert file!=null && Files.exists(file) : file;
     Files.write(file, content.getBytes());
     }
   void refresh() {
     assert Platform.isFxApplicationThread();
-    Path file=ReplMain.l42Root.resolve(this.filename);
+    Path file=GuiData.l42Root.resolve(this.filename);
     assert file!=null && Files.exists(file);
     String content; try {content = new String(Files.readAllBytes(file));}
     catch (IOException e) {throw new Error(e);}
