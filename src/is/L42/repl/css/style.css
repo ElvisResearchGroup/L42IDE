@@ -83,7 +83,7 @@ p { padding: 10px;}
     border-radius: 10px;
     border: 1px solid #a1a1a1;
     margin: 5px;
-    //text-size-adjust: 200%;
+    text-size-adjust: 200%;
     }
 
 #footerwrap {
