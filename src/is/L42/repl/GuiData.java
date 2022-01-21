@@ -13,9 +13,11 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import is.L42.common.Constants;
+import is.L42.common.EndError;
 import is.L42.common.Parse;
 import is.L42.main.Main;
 import is.L42.main.Settings;
+import is.L42.platformSpecific.javaTranslation.Resources;
 import javafx.application.Platform;
 import safeNativeCode.slave.Slave;
 import safeNativeCode.slave.host.ProcessSlave;
@@ -25,10 +27,20 @@ public class GuiData {
   static Slave s=null;
   static Settings settings=null;
   static void updateSettings(){
-    var settingPath=GuiData.l42Root.resolve("Setti.ngs");
-    var currentSettings=Parse.sureSettings(settingPath);
+    var currentSettings=settingsOrPrintErr();
     if(!currentSettings.equals(GuiData.settings)){ GuiData.terminate42(); }
     GuiData.settings=currentSettings;
+    }
+  static private Settings settingsOrPrintErr(){
+    try{ return Parse.sureSettings(GuiData.l42Root.resolve("Setti.ngs")); }
+    catch(EndError ee) {
+      ReplMain.gui.errors.appendText("-------------------------\n");
+      ReplMain.gui.errors.appendText("Settings error:\n");
+      ReplMain.gui.errors.appendText("-------------------------\n");
+      ReplMain.gui.errors.appendText(Main.fixMessage(ee.getMessage())+"\n");
+      ReplMain.gui.selectErr();
+      throw ee;
+      }
     }
   static Slave makeSlave(Settings currentSettings) throws RemoteException, ExecutionException, InterruptedException{
     Slave s=new ProcessSlave(-1,new String[]{},ClassLoader.getPlatformClassLoader()){
@@ -61,20 +73,18 @@ public class GuiData {
       ReplGui.main.loadOverview();
       }
     Platform.runLater(()->{
-      String out=limitLines(pingedData.out(),ReplMain.gui.output.getText());
-      String err=limitLines(pingedData.err(),ReplMain.gui.errors.getText());
-      var tooMuchOut=out.length()+ReplMain.gui.output.getText().length()>max;
-      var tooMuchErr=err.length()+ReplMain.gui.errors.getText().length()>max;
+      String currOut=ReplMain.gui.output.getText();
+      String currErr=ReplMain.gui.errors.getText();
+      String out=limitLines(pingedData.out(),currOut);
+      String err=limitLines(pingedData.err(),currErr);
+      var tooMuchOut=out.length()+currOut.length()>max;
+      var tooMuchErr=err.length()+currErr.length()>max;
       if(tooMuchOut){
-        ReplMain.gui.output.clear();
-        ReplMain.gui.output.appendText(
-          cutted(ReplMain.gui.output.getText(),out));
+        ReplMain.gui.output.setText(cutted(currOut,out));
         }
       else { ReplMain.gui.output.appendText(out); }
       if(tooMuchErr){
-        ReplMain.gui.errors.clear();
-        ReplMain.gui.errors.appendText(
-            cutted(ReplMain.gui.errors.getText(),err));
+        ReplMain.gui.errors.setText(cutted(currErr,err));
         }
       else { ReplMain.gui.errors.appendText(err); }
       ReplMain.gui.tests.handle(pingedData.tests());
@@ -115,18 +125,17 @@ public class GuiData {
     StringBuilder sb = new StringBuilder();
     sb.append("  **Text size limit reached. Some former text has been removed**\n------------------\n");
     int al = a.length(); 
-    int bl = a.length();
-    int howMuchOver = al+bl - max/2;
-    if (al < howMuchOver) { sb.append(b,0,howMuchOver-al);}
+    int bl = b.length();
+    if (bl >= max/2) { sb.append(b,bl-max/2,bl); }
     else {
-      sb.append(a,0,howMuchOver);
+      sb.append(a,(al-(max/2))+bl,al);
       sb.append(b);
     }
     return sb.toString();
   }
-  private static int max=200_000;
-  private static int maxLine=40_000;
-  public static int maxTest=20_000;
+  private static final int max=200_000;
+  private static final int maxLine=40_000;
+  public static final int maxTest=20_000;
   public static void clear(){
     Platform.runLater(()->{
       ReplMain.gui.output.clear();
