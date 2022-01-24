@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.Optional;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Function;
@@ -38,8 +38,8 @@ import javafx.scene.layout.Region;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import is.L42.common.Parse;
 import is.L42.main.Main;
+import is.L42.tools.General;
 
 
 public class ReplGui extends Application {
@@ -91,6 +91,14 @@ public class ReplGui extends Application {
       directoryChooser.setTitle("Select an L42 project to load!");
       File outputFolder = directoryChooser.showDialog(primaryStage);
       if(outputFolder==null) {return;} //no selection has been made
+      String title="";
+      Path p=outputFolder.toPath().toAbsolutePath();
+      for(int i :General.range(3)) {
+        if(p==null){ break; }
+        title=p.getFileName().toString()+(i==0?"":".")+title;
+        p=p.getParent();
+        }
+      primaryStage.setTitle("L42 IDE   "+title);
       running=true;
       runB.setText("Loading");
       openFileBtn.setDisable(false);
@@ -138,11 +146,17 @@ public class ReplGui extends Application {
     runB.setOnAction(e->{
       tests.reset();
       saveAll();
+      clearAll();
       assert !running: "was running-buttonRunPressed";
       GuiData.updateSettings();
       disableRunB();
       ReplMain.runLater(()->main.runCode());
       });
+    }
+  private void clearAll() {
+    output.setText("");
+    errors.setText("");
+    tests.reset();
     }
   private void saveAll() {
     for (Tab t : tabPane.getTabs()) {
@@ -198,8 +212,6 @@ public class ReplGui extends Application {
     ToolBar toolbar = new ToolBar(
       loadProjectBtn,openFileBtn,refreshB,openOverviewBtn,newFileBtn,aboutBtn,empty,clearCacheBtn,runB);
     borderPane.setTop(toolbar);
-    //System.setOut(delegatePrintStream(out,System.out));
-    //System.setErr(delegatePrintStream(err,System.err));
     TabPane outputPane = new TabPane();
     outputPane.setSide(Side.LEFT);
     outputPane.setTabClosingPolicy(TabClosingPolicy.UNAVAILABLE);
