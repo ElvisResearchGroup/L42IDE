@@ -112,6 +112,8 @@ p { padding: 10px;}
 
 .inFloat{
   float: left;
+  padding-left: 1em;
+  width: 100%;
   }
 
 .finishFloat{
@@ -225,8 +227,8 @@ h1{
 
 ol {
   counter-reset: olCounter;
-  padding-left: 3em;
-  margin-left:-65%;
+  padding-left: 5em;
+  margin-top: -0.5em;
 }
 ol li:before {
   content: counter(olCounter);
@@ -266,10 +268,16 @@ table,td,th,tr {
   border-style: solid;
   white-space: nowrap;
   width:60%;
+  min-height: inherit;
+}
+
+.baseHeight{
+  min-height: 19em;
 }
 
 .rotate90 {
-  width: 200px;
+  width: 180px;
+  height:0;
   margin:0px;
   padding:2px;
   font-weight: bold;
@@ -280,6 +288,7 @@ table,td,th,tr {
   transform: rotate(-90deg) translate(-130%, 30%);
   text-size-adjust: 150%;
  }
+
 @media print {
   .ace_editor {
     page-break-inside: avoid;
