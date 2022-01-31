@@ -3,22 +3,22 @@ define("ace/theme/l42_eclipse",["require","exports","module","ace/lib/dom"], fun
 exports.isDark = false;
 exports.cssClass = "ace-l42-eclipse";
 exports.cssText = ".ace-l42-eclipse .ace_gutter {\
-background: #ebebeb;\
+background:"+ Styling.GUTTER_BACKGROUND + ";\
 border-right: 1px solid rgb(159, 159, 159);\
-color: rgb(136, 136, 136);\
+color: "+ Styling.GUTTER_COLOR +";\
 }\
 .ace-l42-eclipse .ace_fold {\
-background-color: rgb(60, 76, 114);\
+background-color: "+ Styling.FOLD_BACKGROUND +";\
 }\
 .ace-l42-eclipse .ace_cursor {\
-color: black;\
+color: "+ Styling.CURSOR_COLOR +";\
 }\
 .ace-l42-eclipse .ace_keyword{\
-color: rgb(127, 0, 85);\
+color: "+ Styling.KEYWORD_COLOR +";\
 }\
 .ace-l42-eclipse .ace_errorHighlight {\
-color: yellow;\
-background-color: red;\
+color: "+ Styling.ERROR_COLOR +";\
+background-color: "+ Styling.ERROR_HIGHLIGHT+";\
 font-weight: bold\
 }\
 .ace-l42-eclipse .ace_reuselibrary {\
@@ -26,23 +26,23 @@ font-weight: bold;\
 font-style: italic;\
 }\
 .ace-l42-eclipse .ace_string {\
-color: rgb(42, 0, 255);\
+color: "+ Styling.STRING_COLOR +";\
 }\
 .ace-l42-eclipse .ace_comment {\
-color: rgb(113, 150, 130);\
+color: "+ Styling.COMMENT_COLOR +";\
 }\
 .ace-l42-eclipse .ace_marker-layer .ace_selection {\
-background: rgb(181, 213, 255);\
+background: "+ Styling.SELECTION_HIGHLIGHT +";\
 }\
 .ace-l42-eclipse .ace_marker-layer .ace_bracket {\
 margin: -1px 0 0 -1px;\
-border: 1px solid rgb(192, 192, 192);\
+border: 1px solid "+ Styling.BRACKET_BORDER +";\
 }\
 .ace-l42-eclipse .ace_active-line {\
-background: rgb(232, 242, 254);\
+background: "+ Styling.ACTIVE_LINE_HIGHLIGHT +";\
 }\
 .ace-l42-eclipse .ace_gutter-active-line {\
-background-color : #DADADA;\
+background-color : "+ Styling.ACTIVE_LINE_GUTTER_HIGHLIGHT +";\
 }\
 .ace-l42-eclipse .ace_marker-layer .ace_selected-word {\
 border: 1px solid rgb(181, 213, 255);\
@@ -51,11 +51,11 @@ border: 1px solid rgb(181, 213, 255);\
 font-weight: bold\
 }\
 .ace-l42-eclipse .ace_methodParameters {\
-color: blue;\
+color: "+ Styling.PARAMETER_COLOR +";\
 font-style: italic;\
 }\
 .ace-l42-eclipse .ace_objectCall {\
-color: blue;\
+color: "+ Styling.OBJECT_COLOR +";\
 font-style: italic;\
 }";
 
