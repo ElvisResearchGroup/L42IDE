@@ -83,7 +83,7 @@ p { padding: 10px;}
     border-radius: 10px;
     border: 1px solid #a1a1a1;
     margin: 5px;
-    //text-size-adjust: 200%;
+    text-size-adjust: 200%;
     }
 
 #footerwrap {
@@ -228,7 +228,7 @@ h1{
 ol {
   counter-reset: olCounter;
   padding-left: 5em;
-  margin-top: -0.4em;
+  margin-top: -0.5em;
 }
 ol li:before {
   content: counter(olCounter);
@@ -250,7 +250,6 @@ ol li {
   border-left-style: solid;
   border-top-style: solid;
   border-color: darkgray;
-  width:80%;
   }
 
 table,td,th,tr {
