@@ -1,33 +1,26 @@
 styling = {
-  background:"whitesmoke",//whitesmoke
-  font:"'Monaco'",//'Monaco'
-  fontColor:"black", //black
-  fontSize:"170%",//170%
-  sidebarTextColor:"rgb(136, 136, 136)",//rgb(136, 136, 136)
-  sidebarBackgroundColor:"#ebebeb", //#ebebeb
-  foldBackground:"rgb(60, 76, 114)",//rgb(60, 76, 114)
-  cursorColor:"black",//black
-  keywordColor:"rgb(127, 0, 85)",//rgb(127, 0, 85)
-  errorTextColor:"yellow",//yellow
-  errorBackgroundColor:"red",//red
-  stringColor:"rgb(42, 0, 255)",//rgb(42, 0, 255)
-  commentColor:"rgb(113, 150, 130)",//rgb(113, 150, 130)
-  selectionBackground:"rgb(181, 213, 255)",//rgb(181, 213, 255)
-  selectedBorder:"rgb(181, 213, 255)",//rgb(181, 213, 255)
-  bracketBorder:"rgb(192, 192, 192)", //rgb(192, 192, 192)
-  activeLineBackground:"rgb(232, 242, 254)", //rgb(232, 242, 254)
-  activeLineSideBarBackground:"#DADADA",//#DADADA
-  parameterColor:"blue",//blue
-  objectColor:"blue"//blue
+  //basic background color and font stylings
+  background:"rgb(245,245,245)", // default - rgb(245,245,245)
+  font:"Monaco",                 // Monaco, Menlo, Ubuntu Mono, Consolas, source-code-pro, monospace
+  fontColor:"rgb(0,0,0)",        // default - rgb(0,0,0)
+  fontSize:"170%",               // default - 170%
+  //extended colors for the IDE
+  sidebarTextColor:"rgb(136, 136, 136)",          // default - rgb(136, 136, 136)
+  sidebarBackgroundColor:"rgb(235,235,235)",      // default - rgb(235,235,235)
+  activeLineBackground:"rgb(232, 242, 254)",      // default - rgb(232, 242, 254)
+  activeLineSideBarBackground:"rgb(218,218,218)", // default - rgb(218,218,218)
+  //special text colors
+  errorTextColor:"rgb(255,255,0)",          // default - rgb(255,255,0)
+  errorBackgroundColor:"rgb(255,0,0)",      // default - rgb(255,0,0)
+  stringColor:"rgb(42, 0, 255)",            // default - rgb(42, 0, 255)
+  commentColor:"rgb(113, 150, 130)",        // default - rgb(113, 150, 130)
+  parameterColor:"rgb(0,0,255)",            // default - rgb(0,0,255)
+  keywordColor:"rgb(127, 0, 85)",           // default - rgb(127, 0, 85)
+  objectCallColor:"rgb(0,0,255)",           // default - rgb(0,0,255)
+  selectedBackground:"rgb(181, 213, 255)", // default - rgb(181, 213, 255)
+  //extra minor color options
+  selectedBorder:"rgb(181, 213, 255)", // default - rgb(181, 213, 255)
+  bracketBorder:"rgb(192, 192, 192)",  // default - rgb(192, 192, 192)
+  foldBackground:"rgb(60, 76, 114)",   // default - rgb(60, 76, 114)
+  cursorColor:"rgb(0,0,0)"             // default - rgb(0,0,0)
 };
-
-/*  css elements
-.ace-l42-eclipse
-.ace_gutter  .ace_fold .ace_cursor
-.ace_keyword .ace_errorHighlight
-.ace_reuselibrary .ace_string
-.ace_comment .ace_marker .ace_selection
-.ace_bracket .ace_active .ace_selected
-.ace_upperIdentifiers .ace_methodParameters
-.ace_objectCall
-*/

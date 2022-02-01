@@ -5,7 +5,7 @@ exports.cssClass = "ace-l42-eclipse";
 exports.cssText = ".ace-l42-eclipse {\
 background: " + style.background + ";\
 color: " + style.fontColor + ";\
-font-family:" + style.font + "!important;\
+font-family:'" + style.font + "'!important;\
 }\
 .ace-l42-eclipse .ace_gutter {\
 background: " + style.sidebarBackgroundColor + ";\
@@ -36,7 +36,7 @@ color: " + style.stringColor + ";\
 color: " + style.commentColor + ";\
 }\
 .ace-l42-eclipse .ace_marker-layer .ace_selection {\
-background: " + style.selectionBackground + ";\
+background: " + style.selectedBackground + ";\
 }\
 .ace-l42-eclipse .ace_marker-layer .ace_bracket {\
 margin: -1px 0 0 -1px;\
@@ -59,7 +59,7 @@ color: " + style.parameterColor + ";\
 font-style: italic;\
 }\
 .ace-l42-eclipse .ace_objectCall {\
-color: " + style.objectColor + ";\
+color: " + style.objectCallColor + ";\
 font-style: italic;\
 }";
 
