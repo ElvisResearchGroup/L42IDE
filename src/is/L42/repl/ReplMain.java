@@ -172,11 +172,15 @@ public class ReplMain {
     }
   void openFileInNewTab(Path file) {
     assert file!=null && Files.exists(file);
+    String openFileName = GuiData.l42Root.relativize(file).toString();
+    openFileInNewTab(file,openFileName);
+    }
+  void openFileInNewTab(Path file,String tabName) {
+    assert file!=null && Files.exists(file);
     try{
       String content; try {content = new String(Files.readAllBytes(file));}
       catch (IOException e){displayError("Invalid Project content","Lost contact with project folder");return;}
-      String openFileName = GuiData.l42Root.relativize(file).toString();
-      makeReplTextArea(openFileName,content);
+      makeReplTextArea(tabName,content);
       }
     catch(DialogError eTab){}
     }
@@ -192,8 +196,7 @@ public class ReplMain {
     Platform.runLater(area.htmlFx::foldAll);
     }
   void openStyle(){
-    System.out.println(Path.of("L42Internals","js","editorStyle.js").toAbsolutePath());
-    openFileInNewTab(Path.of("L42Internals","js","editorStyle.js"));
+    openFileInNewTab(Path.of("L42Internals","js","editorStyle.js"),"IDE Style");
     }
   private ReplTextArea makeReplTextArea(String fileName,String tabContent) {
     URL url = getClass().getResource("textArea.xhtml");
