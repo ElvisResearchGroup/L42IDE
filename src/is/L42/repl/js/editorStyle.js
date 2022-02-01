@@ -1,7 +1,7 @@
 styling = {
   //basic background color and font stylings
   background:"rgb(245,245,245)", // default - rgb(245,245,245)
-  font:"Monaco",                 // Monaco, Menlo, Ubuntu Mono, Consolas, source-code-pro, monospace
+  font:"monospace",                 // Monaco, Menlo, Ubuntu Mono, Consolas, source-code-pro, monospace
   fontColor:"rgb(0,0,0)",        // default - rgb(0,0,0)
   fontSize:"170%",               // default - 170%
   //extended colors for the IDE

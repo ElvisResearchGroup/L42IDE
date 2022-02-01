@@ -113,7 +113,7 @@ var selectDiv=function(id){
   }
 
 var defaultStyle = {
-  background:"rgb(245,245,245)", font:"Monaco", fontColor:"rgb(0,0,0)",
+  background:"rgb(245,245,245)", font:"monospace", fontColor:"rgb(0,0,0)",
   fontSize:"170%", sidebarTextColor:"rgb(136, 136, 136)",
   sidebarBackgroundColor:"rgb(235,235,235)", activeLineBackground:"rgb(232, 242, 254)",
   activeLineSideBarBackground:"rgb(218,218,218)", errorTextColor:"rgb(255,255,0)",
@@ -124,4 +124,4 @@ var defaultStyle = {
   bracketBorder:"rgb(192, 192, 192)", foldBackground:"rgb(60, 76, 114)",
   cursorColor:"rgb(0,0,0)"
   };
-var style = (styling!=undefined) ? styling : defaultStyle;
+var style = (typeof styling!== 'undefined') ? styling : defaultStyle;

@@ -377,7 +377,7 @@ public class ReplGui extends Application {
     return true;
   }
   
-  private FlowPane Style() {
+  /*private FlowPane style() {
   	System.out.println(Taskbar.isTaskbarSupported());
 		//taskbar.getMenu();
     FlowPane fp = new FlowPane();
@@ -385,7 +385,7 @@ public class ReplGui extends Application {
     Label l = new Label("Background :");
     fp.getChildren().addAll(l, cp);
     return fp;
-    }
+    }*/
   /*
   public static PrintStream delegatePrintStream(StringBuffer err,PrintStream prs){
     return new PrintStream(prs){
