@@ -2,60 +2,64 @@ define("ace/theme/l42_eclipse",["require","exports","module","ace/lib/dom"], fun
 
 exports.isDark = false;
 exports.cssClass = "ace-l42-eclipse";
-exports.cssText = ".ace-l42-eclipse .ace_gutter {\
-background: " + Styling.GUTTER_BACKGROUND + ";\
+exports.cssText = ".ace-l42-eclipse {\
+background: " + style.background + ";\
+color: " + style.fontColor + ";\
+font-family:" + style.font + "!important;\
+}\
+.ace-l42-eclipse .ace_gutter {\
+background: " + style.sidebarBackgroundColor + ";\
 border-right: 1px solid rgb(159, 159, 159);\
-color: " + Styling.GUTTER_COLOR + ";\
+color: " + style.sidebarTextColor + ";\
 }\
 .ace-l42-eclipse .ace_fold {\
-background-color: " + Styling.FOLD_BACKGROUND + ";\
+background-color: " + style.foldBackground + ";\
 }\
 .ace-l42-eclipse .ace_cursor {\
-color: " + Styling.CURSOR_COLOR + ";\
+color: " + style.cursorColor + ";\
 }\
 .ace-l42-eclipse .ace_keyword{\
-color: " + Styling.KEYWORD_COLOR + ";\
+color: " + style.keywordColor + ";\
 }\
 .ace-l42-eclipse .ace_errorHighlight {\
-color: " + Styling.ERROR_COLOR + ";\
-background-color: " + Styling.ERROR_HIGHLIGHT + ";\
-font-weight: bold\
+color: " + style.errorTextColor + ";\
+background-color: " + style.errorBackgroundColor + ";\
 }\
 .ace-l42-eclipse .ace_reuselibrary {\
 font-weight: bold;\
 font-style: italic;\
 }\
 .ace-l42-eclipse .ace_string {\
-color: " + Styling.STRING_COLOR + ";\
+color: " + style.stringColor + ";\
 }\
 .ace-l42-eclipse .ace_comment {\
-color: " + Styling.COMMENT_COLOR + ";\
+color: " + style.commentColor + ";\
 }\
 .ace-l42-eclipse .ace_marker-layer .ace_selection {\
-background: " + Styling.SELECTION_HIGHLIGHT + ";\
+background: " + style.selectionBackground + ";\
 }\
 .ace-l42-eclipse .ace_marker-layer .ace_bracket {\
 margin: -1px 0 0 -1px;\
-border: 1px solid " + Styling.BRACKET_BORDER + ";\
+border: 1px solid " + style.bracketBorder + ";\
 }\
 .ace-l42-eclipse .ace_active-line {\
-background: " + Styling.ACTIVE_LINE_HIGHLIGHT + ";\
+background: " + style.activeLineBackground + ";\
 }\
 .ace-l42-eclipse .ace_gutter-active-line {\
-background-color : " + Styling.ACTIVE_LINE_GUTTER_HIGHLIGHT + ";\
+background-color : " + style.activeLineSideBarBackground + ";\
 }\
 .ace-l42-eclipse .ace_marker-layer .ace_selected-word {\
-border: 1px solid " + Styling.SELECTED_BORDER + ";\
+border: 1px solid " + style.selectedBorder + ";\
 }\
 .ace-l42-eclipse .ace_upperIdentifiers {\
 font-weight: bold\
 }\
 .ace-l42-eclipse .ace_methodParameters {\
-color: " + Styling.PARAMETER_COLOR + ";\
+color: " + style.parameterColor + ";\
 font-style: italic;\
 }\
 .ace-l42-eclipse .ace_objectCall {\
-color: " + Styling.OBJECT_COLOR + ";\
+color: " + style.objectColor + ";\
 font-style: italic;\
 }";
 
