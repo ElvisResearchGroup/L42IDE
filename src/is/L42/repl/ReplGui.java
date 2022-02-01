@@ -287,7 +287,7 @@ public class ReplGui extends Application {
     alert.getButtonTypes().setAll(ButtonType.NO,ButtonType.CANCEL,ButtonType.YES);
     alert.setTitle("Save file?");
     alert.setHeaderText(null);
-    alert.setContentText("Do you want to save \""+editor.filename+"\" before closing?");
+    alert.setContentText("Do you want to save \""+editor.tabName+"\" before closing?");
     alert.showAndWait().ifPresent(response->{
       if(response == ButtonType.YES) {
         boolean success=editor.saveToFileAndRemoveStar();
@@ -302,7 +302,7 @@ public class ReplGui extends Application {
     assert Platform.isFxApplicationThread();
     editor.setText(tabContent);
     editor.tab = new Tab();
-    editor.tab.setText(editor.filename);
+    editor.tab.setText(editor.tabName);
     editor.tab.setContent(editor);
     editor.setFocusTraversable(true);
     editor.htmlFx.setFocusTraversable(true);

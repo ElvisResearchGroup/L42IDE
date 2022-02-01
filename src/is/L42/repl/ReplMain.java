@@ -180,7 +180,7 @@ public class ReplMain {
     try{
       String content; try {content = new String(Files.readAllBytes(file));}
       catch (IOException e){displayError("Invalid Project content","Lost contact with project folder");return;}
-      makeReplTextArea(tabName,content);
+      makeReplTextArea(file,tabName,content);
       }
     catch(DialogError eTab){}
     }
@@ -192,13 +192,13 @@ public class ReplMain {
     }
   void openOverview(){
     loadOverview();
-    var area=makeReplTextArea("OVERVIEW",overviewText==null?"":overviewText);
+    var area=makeReplTextArea(null,"OVERVIEW",overviewText==null?"":overviewText);
     Platform.runLater(area.htmlFx::foldAll);
     }
   void openStyle(){
     openFileInNewTab(Path.of("L42Internals","js","editorStyle.js"),"IDE Style");
     }
-  private ReplTextArea makeReplTextArea(String fileName,String tabContent) {
+  private ReplTextArea makeReplTextArea(Path tabPath,String tabName,String tabContent) {
     URL url = getClass().getResource("textArea.xhtml");
     String base;
     if(url.toExternalForm().startsWith("jar:")){ base=jarUrlToOutside(url); }
@@ -209,7 +209,7 @@ public class ReplMain {
     String contentStart=content.substring(0,i+8);
     String contentEnd=content.substring(i+8);    
     String baseTag="<base href=\""+base+"\" target=\"_blank\">";
-    ReplTextArea editor=ReplGui.runAndWait(4,l->new ReplTextArea(l,fileName,contentStart+baseTag+contentEnd));
+    ReplTextArea editor=ReplGui.runAndWait(4,l->new ReplTextArea(l,tabName,tabPath,contentStart+baseTag+contentEnd));
     Platform.runLater(()->gui.openTab(editor,tabContent));
     return editor;
     }

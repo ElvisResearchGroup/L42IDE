@@ -99,7 +99,7 @@ public class HtmlFx extends StackPane{
     }
   private void displayHint(ReplTextArea editor, int row, int col, char last) {
     //row starts from 0 but file lines from 1
-    String filename=editor.filename;
+    String filename=editor.tabName;
     String parsabletext=FromDotToPath.parsable(editor.getText(),row,col,last);
     ReplMain.gui.hints.setText(GuiData.computeHint(row,col,last,filename,parsabletext));
     }

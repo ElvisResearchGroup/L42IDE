@@ -11,14 +11,16 @@ import javafx.scene.control.Tab;
 public class ReplTextArea extends SplitPane {
   private static final double DIVIDER_POSN = 0.75f;
   Tab tab;
-  final String filename;
+  final String tabName;
+  final Path tabPath;
   final HtmlFx htmlFx;
-  public ReplTextArea(CountDownLatch latch, String fname, String content) {
+  public ReplTextArea(CountDownLatch latch, String tabName,Path tabPath, String content) {
     assert content!=null:"";
     assert Platform.isFxApplicationThread();
     htmlFx=new HtmlFx(this);
     htmlFx.createHtmlContent(latch,wv->wv.loadContent(content));
-    filename=fname;
+    this.tabName=tabName;
+    this.tabPath=tabPath;
     this.getItems().addAll(htmlFx);
     this.setDividerPositions(DIVIDER_POSN);
     latch.countDown();
@@ -54,13 +56,13 @@ public class ReplTextArea extends SplitPane {
   void saveToFile() throws IOException{
     assert Platform.isFxApplicationThread();
     String content=getText();
-    Path file=GuiData.l42Root.resolve(this.filename);
+    Path file=this.tabPath;
     assert file!=null && Files.exists(file) : file;
     Files.write(file, content.getBytes());
     }
   void refresh() {
     assert Platform.isFxApplicationThread();
-    Path file=GuiData.l42Root.resolve(this.filename);
+    Path file=this.tabPath;
     assert file!=null && Files.exists(file);
     String content; try {content = new String(Files.readAllBytes(file));}
     catch (IOException e) {throw new Error(e);}
@@ -68,12 +70,12 @@ public class ReplTextArea extends SplitPane {
     removeStar();
     }
   void addStar() {
-    if(!tab.getText().endsWith("*")){tab.setText(filename+"*");}
+    if(!tab.getText().endsWith("*")){tab.setText(tabName+"*");}
     }
   void removeStar() {
-    if(tab.getText().endsWith("*")) {tab.setText(filename);}
+    if(tab.getText().endsWith("*")) {tab.setText(tabName);}
     }
   void addSaveError() {
-    tab.setText(filename+"--SaveFailed");
+    tab.setText(tabName+"--SaveFailed");
     }
   }
