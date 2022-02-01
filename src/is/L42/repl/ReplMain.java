@@ -191,6 +191,10 @@ public class ReplMain {
     var area=makeReplTextArea("OVERVIEW",overviewText==null?"":overviewText);
     Platform.runLater(area.htmlFx::foldAll);
     }
+  void openStyle(){
+    var area=makeReplTextArea("Style","");
+    Platform.runLater(area.htmlFx::foldAll);
+    }
   private ReplTextArea makeReplTextArea(String fileName,String tabContent) {
     URL url = getClass().getResource("textArea.xhtml");
     String base;
