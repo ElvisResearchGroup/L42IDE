@@ -20,6 +20,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
@@ -40,7 +41,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import is.L42.main.Main;
 import is.L42.tools.General;
-
+import java.awt.Taskbar;
 
 public class ReplGui extends Application {
   static ReplMain main;
@@ -71,6 +72,7 @@ public class ReplGui extends Application {
   Button clearCacheBtn;
   Button newFileBtn;
   Button aboutBtn;
+  Button styleBtn;
   Stage stage;
   Tab selectedTab=null;
   @SuppressWarnings("unchecked")
@@ -191,6 +193,10 @@ public class ReplGui extends Application {
   FlowPane fp = aboutText(newVersion());
   aboutBtn.setOnAction(t->makeDialog("About", fp));
   }
+  private void mkStyleBtn(Stage primaryStage){
+    styleBtn=new Button("Style");
+    styleBtn.setOnAction(t->ReplMain.runLater(main::openStyle));
+    }
   @Override
   public void start(Stage primaryStage) throws Exception {
     assert Platform.isFxApplicationThread();
@@ -207,10 +213,11 @@ public class ReplGui extends Application {
     mkClearCacheBtn(primaryStage);
     mkNewFileBtn(primaryStage);
     mkAboutBtn(primaryStage);
+    mkStyleBtn(primaryStage);
     Pane empty=new Pane();
     HBox.setHgrow(empty, Priority.ALWAYS);
     ToolBar toolbar = new ToolBar(
-      loadProjectBtn,openFileBtn,refreshB,openOverviewBtn,newFileBtn,aboutBtn,empty,clearCacheBtn,runB);
+      loadProjectBtn,openFileBtn,refreshB,openOverviewBtn,newFileBtn,aboutBtn,styleBtn, empty,clearCacheBtn,runB);
     borderPane.setTop(toolbar);
     TabPane outputPane = new TabPane();
     outputPane.setSide(Side.LEFT);
@@ -369,6 +376,16 @@ public class ReplGui extends Application {
     finally { if(huc != null) {huc.disconnect();} }
     return true;
   }
+  
+  private FlowPane Style() {
+  	System.out.println(Taskbar.isTaskbarSupported());
+		//taskbar.getMenu();
+    FlowPane fp = new FlowPane();
+    ColorPicker cp = new ColorPicker();
+    Label l = new Label("Background :");
+    fp.getChildren().addAll(l, cp);
+    return fp;
+    }
   /*
   public static PrintStream delegatePrintStream(StringBuffer err,PrintStream prs){
     return new PrintStream(prs){
