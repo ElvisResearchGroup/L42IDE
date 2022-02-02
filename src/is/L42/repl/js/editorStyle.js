@@ -1,9 +1,9 @@
 styling = {
   //basic background color and font stylings
   background:"rgb(245,245,245)", // default - rgb(245,245,245)
-  font:"monospace",                 // Monaco, Menlo, Ubuntu Mono, Consolas, source-code-pro, monospace
+  font:"'Monaco'",                 // font must be monospace compatible
   fontColor:"rgb(0,0,0)",        // default - rgb(0,0,0)
-  fontSize:"170%",               // default - 170%
+  fontSize:10,               // default 15px
   //extended colors for the IDE
   sidebarTextColor:"rgb(136, 136, 136)",          // default - rgb(136, 136, 136)
   sidebarBackgroundColor:"rgb(235,235,235)",      // default - rgb(235,235,235)

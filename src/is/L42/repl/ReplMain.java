@@ -196,8 +196,10 @@ public class ReplMain {
     Platform.runLater(area.htmlFx::foldAll);
     }
   void openStyle(){
-    openFileInNewTab(Path.of("L42Internals","js","editorStyle.js"),"IDE Style");
-    }
+    if(Main.l42IsRepoVersion.equals("testing")) { 
+	  openFileInNewTab(Path.of("src","is","L42","repl","js","editorStyle.js"),"IDE Style");}
+      else {  openFileInNewTab(Path.of("L42Internals","js","editorStyle.js"),"IDE Style"); }
+	}
   private ReplTextArea makeReplTextArea(Path tabPath,String tabName,String tabContent) {
     URL url = getClass().getResource("textArea.xhtml");
     String base;

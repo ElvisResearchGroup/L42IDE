@@ -8,38 +8,36 @@ var doOnLoad=function (){
   hide(allDivs);
   // Get every l42 Div
   setAllAs("l42IDE",{
-    fontSize: style.fontSize,
-    maxLines:30000,
+    fontSize: style.fontSize + "px",
+    fontFamily: style.font + " monospace",
     mode:"ace/mode/l42",
     theme:"ace/theme/l42_eclipse",
+    maxLines:10,
     tabSize: 100,
     useSoftTabs: true,
     behavioursEnabled: false,
-    wrapBehavioursEnabled: false,
+    wrapBehavioursEnabled: false
     });
   setAllAs("l42",{
     fontSize:"95%",
-    maxLines:3000,
     mode:"ace/mode/l42",
     theme:"ace/theme/l42_eclipse"
     });
   var config = {
     fontSize:"115%",
-    maxLines:3000,
     mode:"ace/mode/l42",
+    maxLines:3000,
     theme:"ace/theme/l42_eclipse"
     };
   setAllAs("l42Big",config);
   setAllAs("l42BigFolded",config);
   setAllAs("java",{
     fontSize:"95%",
-    maxLines:3000,
     mode:"ace/mode/java",
     theme:"ace/theme/github"
     });
   setAllAs("html",{
     fontSize:"115%",
-    maxLines:3000,
     mode:"ace/mode/html",
     theme:"ace/theme/github"
     });
@@ -51,10 +49,11 @@ var setOurMinMax=function(){
   var html=document.documentElement;
   var height = Math.max(body.scrollHeight, body.offsetHeight,
     html.clientHeight, html.scrollHeight, html.offsetHeight );
-  var lineHeight = height/27-1;
+  var lineHeight = height/(style.fontSize);
+  if(lineHeight > 100) {lineHeight = 0;}
   setAllAs("l42IDE",{
-    maxLines:lineHeight,
-    minLines:lineHeight,
+    maxLines: 3000,
+    minLines: lineHeight,
     autoScrollEditorIntoView: true
     });
   }
@@ -113,8 +112,8 @@ var selectDiv=function(id){
   }
 
 var defaultStyle = {
-  background:"rgb(245,245,245)", font:"monospace", fontColor:"rgb(0,0,0)",
-  fontSize:"170%", sidebarTextColor:"rgb(136, 136, 136)",
+  background:"rgb(245,245,245)", font:"", fontColor:"rgb(0,0,0)",
+  fontSize:20, sidebarTextColor:"rgb(136, 136, 136)",
   sidebarBackgroundColor:"rgb(235,235,235)", activeLineBackground:"rgb(232, 242, 254)",
   activeLineSideBarBackground:"rgb(218,218,218)", errorTextColor:"rgb(255,255,0)",
   errorBackgroundColor:"rgb(255,0,0)", stringColor:"rgb(42, 0, 255)",
