@@ -37,7 +37,7 @@ body {
     font-family: Verdana, Arial, Helvetica, sans-serif;
     font-size: 13px;
     color:#333;
-	background: rgb(245,245,245);
+	background: rgb(235,245,255);
 }
 
 p { padding: 10px;}
@@ -56,7 +56,7 @@ p { padding: 10px;}
 
 #header {
     height: 85px;
-	background-color: rgb(0, 71, 48);
+	background-color: rgb(20, 40, 100);
     //background-image: url('stars.gif');
     //background-repeat: repeat-y;
     //background-attachment: scroll;
@@ -98,9 +98,9 @@ p { padding: 10px;}
     border-radius: 10px  10px 0px 0px;
     border-style:solid;
     border-color:rgb(200,200,200);
-    border-width: 3px 0px 0px 0px;
+    border-width: 3px 1px 0px 1px;
     color: rgb(150,150,150);
-    margin: 5px;
+    margin: 5px 0px 0px;
 }
 #footer a, #footer a:link, #footer a:visited, #footer a:active, #footer a:hover {
     color: rgb(150,150,150);
@@ -175,7 +175,7 @@ h1{
 
 
 .button {
-    background-color: rgb(100, 200,100);
+    background-color: rgb(100, 150,200);
     border: none;
     color: black;
     font-weight: bold;
@@ -187,10 +187,10 @@ h1{
     font-size: 1.1em;
     border-style: solid;
     border-color: darkgray;
-    border-top: 0.5em solid rgb(50, 200,50);
-    border-right: 0.3em solid rgb(100, 200, 200);
-    border-left: 0.3em solid rgb(100, 200, 200);
-    border-bottom:0.3em solid rgb(80, 180, 180);
+    border-top: 0.5em solid rgb(50, 100,200);
+    border-right: 0.3em solid rgb(60, 110, 190);
+    border-left: 0.3em solid rgb(60, 110, 190);
+    border-bottom:0.3em solid rgb(80, 130, 180);
     border-top-right-radius: 1em;
     border-top-left-radius: 1em;
     border-bottom-right-radius: 0.1em;
