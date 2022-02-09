@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.CountDownLatch;
+import java.util.regex.Pattern;
+
 import javafx.application.Platform;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
@@ -58,6 +60,7 @@ public class ReplTextArea extends SplitPane {
     String content=getText();
     Path file=this.tabPath;
     assert file!=null && Files.exists(file) : file;
+    if(file.endsWith("editorStyle.js")) { parseStyle(content);}
     Files.write(file, content.getBytes());
     }
   void refresh() {
@@ -78,4 +81,25 @@ public class ReplTextArea extends SplitPane {
   void addSaveError() {
     tab.setText(tabName+"--SaveFailed");
     }
+  private void parseStyle(String content) throws IOException{
+  	boolean valid = Pattern.compile("[\n//]").splitAsStream(content.replace(" ", ""))
+  	.filter(s->s.contains(":"))
+  	.map(s->{
+  		String s1 = s.substring(s.indexOf(":")+1);
+  		if(s.startsWith("font:")) { return s1.matches("^[ \",'a-zA-Z]*$");}
+  		else if(s.startsWith("fontSize:")) { return s1.matches("^[.,0-9]*$") 
+  				&& Double.parseDouble(s1.replace(",", "")) >= 0;}
+  		return s1.startsWith("\"rgb") && (s1.endsWith(")\",") || s1.endsWith(")\""));
+  	})
+  	.allMatch(v->v==true);
+  	if(!valid) { throw new IOException("Style IO");}
+    }
   }
+  
+  
+  
+  
+  
+  
+  
+  

@@ -254,6 +254,7 @@ ol li {
   border-left-style: solid;
   border-top-style: solid;
   border-color: darkgray;
+  width:80%;
   }
 
 table,td,th,tr {
