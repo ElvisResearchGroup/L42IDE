@@ -5,7 +5,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.CountDownLatch;
 import java.util.regex.Pattern;
-
 import javafx.application.Platform;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
@@ -60,7 +59,7 @@ public class ReplTextArea extends SplitPane {
     String content=getText();
     Path file=this.tabPath;
     assert file!=null && Files.exists(file) : file;
-    if(file.endsWith("editorStyle.js")) { parseStyle(content);}
+    if(file.endsWith("editorStyle.js")) { parseStyle(content);} //TODO: Marco fix
     Files.write(file, content.getBytes());
     }
   void refresh() {
@@ -94,12 +93,5 @@ public class ReplTextArea extends SplitPane {
   	.allMatch(v->v==true);
   	if(!valid) { throw new IOException("Style IO");}
     }
+  //TODO Marco fix
   }
-  
-  
-  
-  
-  
-  
-  
-  

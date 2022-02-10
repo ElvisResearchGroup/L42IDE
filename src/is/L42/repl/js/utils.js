@@ -9,10 +9,10 @@ var doOnLoad=function (){
   // Get every l42 Div
   setAllAs("l42IDE",{
     fontSize: style.fontSize + "px",
-    fontFamily: style.font + " monospace",
+    fontFamily: style.font, //" monospace"
     mode:"ace/mode/l42",
     theme:"ace/theme/l42_eclipse",
-    maxLines:10,
+    //maxLines:10,
     tabSize: 100,
     useSoftTabs: true,
     behavioursEnabled: false,
@@ -49,11 +49,10 @@ var setOurMinMax=function(){
   var html=document.documentElement;
   var height = Math.max(body.scrollHeight, body.offsetHeight,
     html.clientHeight, html.scrollHeight, html.offsetHeight );
-  var lineHeight = height/(style.fontSize);
-  if(lineHeight > 100) {lineHeight = 0;}
+  var lineNum = height/style.fontSize;
   setAllAs("l42IDE",{
-    maxLines: 3000,
-    minLines: lineHeight,
+    maxLines: lineNum,
+    minLines: lineNum,
     autoScrollEditorIntoView: true
     });
   }
@@ -112,7 +111,7 @@ var selectDiv=function(id){
   }
 
 var defaultStyle = {
-  background:"rgb(245,245,245)", font:"", fontColor:"rgb(0,0,0)",
+  background:"rgb(245,245,245)", font:"monospace", fontColor:"rgb(0,0,0)",
   fontSize:20, sidebarTextColor:"rgb(136, 136, 136)",
   sidebarBackgroundColor:"rgb(235,235,235)", activeLineBackground:"rgb(232, 242, 254)",
   activeLineSideBarBackground:"rgb(218,218,218)", errorTextColor:"rgb(255,255,0)",

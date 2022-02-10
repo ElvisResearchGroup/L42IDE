@@ -57,18 +57,17 @@ p { padding: 10px;}
 #header {
     height: 85px;
 	background-color: rgb(20, 40, 100);
-    /* background-image: url('stars.gif'); */
-    /* background-repeat: repeat-y; */
-    /* background-attachment: scroll; */
-    /* background-position: center top; */
-    /* background-clip: border-box; */
-    /* background-origin: padding-box; */
-    /* background-size: auto auto; */
+    //background-image: url('stars.gif');
+    //background-repeat: repeat-y; 
+    //background-attachment: scroll;
+    //background-position: center top;
+    //background-clip: border-box;
+    //background-origin: padding-box;
+    //background-size: auto auto;
     border-radius: 0px  0px 10px 10px;
 	border-style:solid;
     border-color:rgb(0,40,20);
     border-width: 0px 0px 3px 0px;
-    margin: 5px;
 }
 
 #contentwrap {
@@ -83,7 +82,7 @@ p { padding: 10px;}
     border-radius: 10px;
     border: 1px solid rgb(100,130,200);;
     margin: 5px;
-    //text-size-adjust: 200%;
+    text-size-adjust: 200%;
     }
 
 #footerwrap {

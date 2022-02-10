@@ -1,7 +1,7 @@
 styling = {
   //basic background color and font stylings
   background:"rgb(245,245,245)", // default - rgb(245,245,245)
-  font:"'Monaco'",                 // font must be monospace compatible
+  font:"monospace",                 // font must be monospace compatible - Courier/Courier New, Times New Roman, Andale Mono, monospace
   fontColor:"rgb(0,0,0)",        // default - rgb(0,0,0)
   fontSize:15,               // default 15
   //extended colors for the IDE
