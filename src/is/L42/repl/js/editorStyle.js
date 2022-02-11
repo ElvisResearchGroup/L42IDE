@@ -3,7 +3,7 @@ styling = {
   background:"rgb(245,245,245)", // default - rgb(245,245,245)
   font:"monospace",                 // font must be monospace compatible - Courier, Courier New, Times New Roman, Andale Mono, monospace
   fontColor:"rgb(0,0,0)",        // default - rgb(0,0,0)
-  fontSize:20,               // default 15
+  fontSize:20,               // default 20
   //extended colors for the IDE
   sidebarTextColor:"rgb(136, 136, 136)",          // default - rgb(136, 136, 136)
   sidebarBackgroundColor:"rgb(235,235,235)",      // default - rgb(235,235,235)
