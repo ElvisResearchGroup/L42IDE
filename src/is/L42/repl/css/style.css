@@ -80,7 +80,7 @@ p { padding: 10px;}
 #content {
     background: white;
     border-radius: 10px;
-    border: 1px solid rgb(100,130,200);;
+    border: 1px solid rgb(100,100,150);//rgb(100,130,200);
     margin: 5px;
     text-size-adjust: 200%;
     }
@@ -96,7 +96,7 @@ p { padding: 10px;}
     background: rgb(245,245,245);
     border-radius: 10px  10px 0px 0px;
     border-style:solid;
-    border-color:rgb(100,130,200);
+    border-color:rgb(150,150,150);
     border-width: 3px 1px 0px 1px;
     color: rgb(150,150,150);
     margin: 5px 0px 0px;
@@ -157,6 +157,7 @@ h2{padding: 10px;font-size: 110%;font-weight: bold;}
 h1{
   padding: 15px;
   padding-left: 3em;
+  margin-right: 1ex;
   font-size: 150%;
   font-weight: bold;
   color: rgb(45,45,45);
@@ -167,7 +168,6 @@ h1{
   border-left-width: 0.0em;
   border-top-style:solid;
   border-left-style:solid;
-  width:85%;
   }
 
 .code{font-family:monospace; font-weight: bold; color: rgb(10,10,55);}
@@ -231,7 +231,7 @@ h1{
 ol {
   counter-reset: olCounter;
   padding-left: 5em;
-  margin-top: -0.5em;
+  margin-top: -0.4em;
   width:80%;
 }
 ol li:before {
@@ -253,7 +253,7 @@ ol li {
   border: 0.1em;
   border-left-style: solid;
   border-top-style: solid;
-  border-color: darkgray;
+  border-color: rgb(100,100,150);
   }
 
 table,td,th,tr {
@@ -268,7 +268,7 @@ table,td,th,tr {
   border-bottom:2px;
   border-top-left-radius: 10px;
   border-bottom-left-radius: 10px;
-  border-color: #a1a1a1;
+  border-color: rgb(100,100,150);
   border-style: solid;
   white-space: nowrap;
   width:60%;
