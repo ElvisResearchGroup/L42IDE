@@ -9,10 +9,9 @@ var doOnLoad=function (){
   // Get every l42 Div
   setAllAs("l42IDE",{
     fontSize: style.fontSize + "px",
-    fontFamily: style.font, //" monospace"
+    fontFamily: style.font,
     mode:"ace/mode/l42",
     theme:"ace/theme/l42_eclipse",
-    //maxLines:10,
     tabSize: 100,
     useSoftTabs: true,
     behavioursEnabled: false,
@@ -25,8 +24,8 @@ var doOnLoad=function (){
     });
   var config = {
     fontSize:"115%",
-    mode:"ace/mode/l42",
     maxLines:3000,
+    mode:"ace/mode/l42",
     theme:"ace/theme/l42_eclipse"
     };
   setAllAs("l42Big",config);
@@ -51,7 +50,7 @@ var setOurMinMax=function(){
     html.clientHeight, html.scrollHeight, html.offsetHeight );
   var lineNum = height/style.fontSize;
   setAllAs("l42IDE",{
-    maxLines: lineNum,
+    maxLines: 3000,//if its less than num of lines in file it creates a second scroll bar
     minLines: lineNum,
     autoScrollEditorIntoView: true
     });

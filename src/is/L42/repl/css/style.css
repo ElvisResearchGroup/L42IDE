@@ -58,7 +58,7 @@ p { padding: 10px;}
     height: 85px;
 	background-color: rgb(20, 40, 100);
     //background-image: url('stars.gif');
-    //background-repeat: repeat-y; 
+    //background-repeat: repeat-y;
     //background-attachment: scroll;
     //background-position: center top;
     //background-clip: border-box;
@@ -232,6 +232,7 @@ ol {
   counter-reset: olCounter;
   padding-left: 5em;
   margin-top: -0.5em;
+  width:80%;
 }
 ol li:before {
   content: counter(olCounter);
@@ -253,7 +254,6 @@ ol li {
   border-left-style: solid;
   border-top-style: solid;
   border-color: darkgray;
-  width:80%;
   }
 
 table,td,th,tr {
