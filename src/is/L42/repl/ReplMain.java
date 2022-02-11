@@ -9,17 +9,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import is.L42.common.Constants;
 import is.L42.common.Parse;
 import is.L42.main.Main;
+import is.L42.repl.ReplTextArea.Kind;
 import javafx.application.Application;
 import javafx.application.Platform;
 
@@ -173,14 +172,14 @@ public class ReplMain {
   void openFileInNewTab(Path file) {
     assert file!=null && Files.exists(file);
     String openFileName = GuiData.l42Root.relativize(file).toString();
-    openFileInNewTab(file,openFileName);
+    openFileInNewTab(Kind.Code,file,openFileName);
     }
-  void openFileInNewTab(Path file,String tabName) {
+  void openFileInNewTab(Kind kind,Path file,String tabName) {
     assert file!=null && Files.exists(file);
     try{
       String content; try {content = new String(Files.readAllBytes(file));}
       catch (IOException e){displayError("Invalid Project content","Lost contact with project folder");return;}
-      makeReplTextArea(file,tabName,content);
+      makeReplTextArea(kind,file,tabName,content);
       }
     catch(DialogError eTab){}
     }
@@ -192,15 +191,17 @@ public class ReplMain {
     }
   void openOverview(){
     loadOverview();
-    var area=makeReplTextArea(null,"OVERVIEW",overviewText==null?"":overviewText);
+    var area=makeReplTextArea(Kind.Overview,null,"OVERVIEW",overviewText==null?"":overviewText);
     Platform.runLater(area.htmlFx::foldAll);
     }
   void openStyle(){
-    if(Main.l42IsRepoVersion.equals("testing")) { 
-	  openFileInNewTab(Path.of("src","is","L42","repl","js","editorStyle.js"),"IDE Style");}
-      else {  openFileInNewTab(Path.of("L42Internals","js","editorStyle.js"),"IDE Style"); }
-	}
-  private ReplTextArea makeReplTextArea(Path tabPath,String tabName,String tabContent) {
+    Path path;
+    var test=Main.l42IsRepoVersion.equals("testing");
+    if(test){ path=Path.of("src","is","L42","repl","js","editorStyle.js"); }
+    else {path=Path.of("L42Internals","js","editorStyle.js"); }
+    openFileInNewTab(Kind.Style,path,"IDE Style");
+	  }
+  private ReplTextArea makeReplTextArea(ReplTextArea.Kind kind, Path tabPath,String tabName,String tabContent) {
     URL url = getClass().getResource("textArea.xhtml");
     String base;
     if(url.toExternalForm().startsWith("jar:")){ base=jarUrlToOutside(url); }
@@ -211,7 +212,7 @@ public class ReplMain {
     String contentStart=content.substring(0,i+8);
     String contentEnd=content.substring(i+8);    
     String baseTag="<base href=\""+base+"\" target=\"_blank\">";
-    ReplTextArea editor=ReplGui.runAndWait(4,l->new ReplTextArea(l,tabName,tabPath,contentStart+baseTag+contentEnd));
+    ReplTextArea editor=ReplGui.runAndWait(4,l->new ReplTextArea(l,kind,tabName,tabPath,contentStart+baseTag+contentEnd));
     Platform.runLater(()->gui.openTab(editor,tabContent));
     return editor;
     }

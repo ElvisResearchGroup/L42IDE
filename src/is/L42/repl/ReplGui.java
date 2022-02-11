@@ -280,8 +280,8 @@ public class ReplGui extends Application {
     runB.setText("Running");
     }
   private void tabOnClose(ReplTextArea editor,Event t) {
-    if(!editor.tab.getText().endsWith("*")) {return;}
-    if(editor.tab.getText().equals("Overview")) {return;}
+    if(!editor.tab.getText().endsWith("*")){ return; }
+    if(editor.kind==ReplTextArea.Kind.Overview){ return; }
     Alert alert = new Alert(AlertType.CONFIRMATION);
     alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
     alert.getButtonTypes().setAll(ButtonType.NO,ButtonType.CANCEL,ButtonType.YES);

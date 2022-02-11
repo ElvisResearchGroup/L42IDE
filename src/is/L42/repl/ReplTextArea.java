@@ -12,14 +12,17 @@ import javafx.scene.control.Tab;
 public class ReplTextArea extends SplitPane {
   private static final double DIVIDER_POSN = 0.75f;
   Tab tab;
+  final Kind kind;
+  enum Kind{Code,Overview,Style}
   final String tabName;
   final Path tabPath;
   final HtmlFx htmlFx;
-  public ReplTextArea(CountDownLatch latch, String tabName,Path tabPath, String content) {
+  public ReplTextArea(CountDownLatch latch,Kind kind, String tabName,Path tabPath, String content) {
     assert content!=null:"";
     assert Platform.isFxApplicationThread();
     htmlFx=new HtmlFx(this);
     htmlFx.createHtmlContent(latch,wv->wv.loadContent(content));
+    this.kind=kind;
     this.tabName=tabName;
     this.tabPath=tabPath;
     this.getItems().addAll(htmlFx);
@@ -59,7 +62,7 @@ public class ReplTextArea extends SplitPane {
     String content=getText();
     Path file=this.tabPath;
     assert file!=null && Files.exists(file) : file;
-    if(file.endsWith("editorStyle.js")) { parseStyle(content);} //TODO: Marco fix
+    if(this.kind==Kind.Style){ parseStyle(content);}
     Files.write(file, content.getBytes());
     }
   void refresh() {

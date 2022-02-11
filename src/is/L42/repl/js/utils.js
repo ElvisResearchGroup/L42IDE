@@ -121,4 +121,27 @@ var defaultStyle = {
   bracketBorder:"rgb(192, 192, 192)", foldBackground:"rgb(60, 76, 114)",
   cursorColor:"rgb(0,0,0)"
   };
-var style = (typeof styling!== 'undefined') ? styling : defaultStyle;
+var makeStyle = function(){
+  var d = defaultStyle;
+  var s = (typeof styling!== 'undefined') ? styling : defaultStyle;
+  var valid = function(text){
+    //if(typeof text == 'undefined'){return false;}
+    if(typeof text == 'number'){return true;}
+    if(typeof text !== 'string'){return false;}
+    text=text.trim();
+    var isRgb = text.startsWith("rgb(") && text.endsWith(")");
+    if(isRgb){text=text.substring(4,text.length-1);};
+    var restricted = "\"\'`;!@#$%^&-+=?><.{}[]()\\:\n\t\r";
+    var invalid = text.split("").some(ch => restricted.includes(ch));
+    return !invalid;
+    };
+  var f = function(fName){
+    var text1 = s[fName];
+    var text2 = d[fName];
+    return valid(text1) ? text1 : text2;
+    };
+  var res = {}
+  Object.keys(d).forEach((key) => res[key]=f(key))
+  return res;
+  };
+var style = makeStyle();
